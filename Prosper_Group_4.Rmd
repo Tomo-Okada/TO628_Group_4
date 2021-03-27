@@ -1,0 +1,78 @@
+---
+title: "Prosper_Group_4"
+author: "Yoshitomo Okada"
+date: "2021/3/26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Group Project #1: Prosper Data Analysis 
+We want to build two models:
+ 1. A linear regression model to determine how interest rate for loans is determined. 
+ 2. A logistic model of what factors lead to a loan default.
+
+## Import and Clean Data
+```{r}
+## Code for importing and cleaning data
+listings <- read.csv("ProjectA_Listings2013.csv")
+str(listings)
+summary(listings)
+
+#Change some variables to factors
+listings$loan_status <- as.factor(listings$loan_status)
+listings$income_range <- as.factor(listings$income_range)
+
+#Set all negative values to NA
+listings$months_employed <- ifelse(listings$months_employed < 0, NA, listings$months_employed)
+
+#Clean NA data
+listings$months_employed <- ifelse(is.na(listings$months_employed),mean(listings$months_employed,na.rm = TRUE),listings$months_employed)
+listings$installment_balance <- ifelse(is.na(listings$installment_balance),mean(listings$installment_balance,na.rm = TRUE),listings$installment_balance)
+
+#Lets take a look at structure and summary
+str(listings)
+summary(listings)
+
+```
+
+## Linear Regression Models
+```{r}
+model1 <- lm(borrower_rate ~ number_of_days + amount_funded + prosper_rating + listing_term + scorex + prosper_score + listing_category_id + income_range_description + stated_monthly_income + employment_status_description + months_employed + current_delinquencies + delinquencies_last7_years + bankcard_utilization + delinquencies_over30_days + is_homeowner, data = listings)
+summary(model1)
+
+model2 <- lm(borrower_rate ~ number_of_days + prosper_rating + listing_term + scorex + prosper_score + listing_category_id + stated_monthly_income + employment_status_description + current_delinquencies + bankcard_utilization + delinquencies_over30_days + is_homeowner, data = listings)
+summary(model2)
+
+model3 <- lm(borrower_rate ~ prosper_rating + scorex + prosper_score + employment_status_description, data = listings)
+summary(model3)
+
+model4 <- lm(borrower_rate ~ prosper_rating + prosper_score, data = listings)
+summary(model4)
+```
+
+## Logistic Regression Models
+```{r}
+#Set default_status 1 = DEFAULT or CHARGEOFF
+listings$default_status <- 0
+listings$default_status <- ifelse((listings$loan_status == 2 | listings$loan_status == 3), 1, listings$default_status)
+
+LRM1 <- glm(default_status ~ number_of_days + amount_funded + prosper_rating + listing_term + scorex + prosper_score + listing_category_id + income_range_description + stated_monthly_income + employment_status_description + months_employed + current_delinquencies + delinquencies_last7_years + bankcard_utilization + delinquencies_over30_days + is_homeowner,data = listings, family = "binomial")
+summary(LRM1)
+
+LRM2 <- glm(default_status ~ number_of_days + amount_funded + prosper_rating + listing_term + scorex + prosper_score + listing_category_id +employment_status_description + current_delinquencies + delinquencies_last7_years + bankcard_utilization + delinquencies_over30_days,data = listings, family = "binomial")
+summary(LRM2)
+
+LRM3 <- glm(default_status ~ number_of_days + prosper_rating + listing_term + scorex + prosper_score + listing_category_id +employment_status_description + delinquencies_last7_years + bankcard_utilization,data = listings, family = "binomial")
+summary(LRM3)
+
+LRM4 <- glm(default_status ~ prosper_rating + prosper_score,data = listings, family = "binomial")
+summary(LRM4)
+```
+
+
+
+
+
