@@ -9,9 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Introduction
+# Introduction
 
-In this report, two elements of credit risk are assessed using regression analysis: Interest Rate Evaluation and Loan Default Likelihood. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
+In this report, two elements of credit risk are assessed using regression analysis: **Interest Rate Determination** and **Loan Default Likelihood**. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
 This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. 
 
 # Import and Clean Data
@@ -77,13 +77,38 @@ Model 1 is a main effects linear regression model.The target variable in this mo
 
 Using a p-value of < 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes the significant variables. 
 
-We interpret Model 2 in the following manner. 
+The following is the interpretation of the elements in the regression model that *positively* impact a borrower's rate:
 
-* For each additional number of days, a borrower's rate increases by 0.0042 on average. 
-* Increasing the principal balance by $1 increases a borrower's rate by 0.0000245 on average. 
-* Using loan status 1 (Current), as a baseline, those with loan status 2 (Chargeoff) on average have a borrower's rate that is higher by 1.574. 
-* Those with loan status 3 on average have a borrower's rate that is higher than those with loan status 1 by 0.4938. 
-* Those with loan status 4 on average have a borrower's rate that is higher than those with loan status 1 by 0.1411.   
+* For each additional **number of days**, a borrower's rate increases by 0.0042% on average. 
+* Increasing the **principal balance** by $1 increases a borrower's rate by 0.0000245% on average. 
+* Using **loan status 1** (CURRENT) as a baseline, borrowers with **loan status 2** (CHARGEOFF) on average have a borrower's rate that is higher by 1.574%. 
+* Those with **loan status 3** (DEFAULTED) on average have a borrower's rate that is higher than those with loan status 1 by 0.4938%. 
+* Those with **loan status 4** (COMPLETED) on average have a borrower's rate that is higher than those with loan status 1 by 0.1411%.   
+* Using **prosper rating B** as a baseline, borrowers with a **prosper rating of E** on average have a borrower's rate that is higher by 3.435%..
+* Those with a **prosper rating of HR** on average have a borrower's rate that is higher by 7.040%.
+* Those with a **prosper rating of A** on average have a borrower's rate that is higher by 11.24%.
+* Those with a **prosper rating of AA** on average have a borrower's rate that is higher by 11.56%.
+* Those with a **prosper rating of C** on average have a borrower's rate that is higher by 19.08%.
+* Using **listing term 12** as a baseline, borrower's categorized under **listing term 36**, or whose listing term was 36 months, typically had a borrower's rate that was higher by 6.818%. 
+* Borrower's categorized under **listing term 60**, or whose listing term was 60 months, typically had a borrower's rate that was higher by 8.236%. 
+* A $1 increase in a borrower's **listing monthly payment** corresponds to an 0.00672% increase in a borrower's rate.
+* For **dti_wprosper_loan** I am unsure how to interpret these results. Does anyone know what dti_wprosper_loan is? and why are so many of the values so low while a few of the values are 1,000,000?
+* One additional **inquiry in the last 6 months** corresponds to a 0.05487% increase in a borrower's rate.
+* An increase in **bank card utilization** by 1% increases a borrower's rate by 0.002307%
+* An additional inquiry to **total inquiries** corresponds to a 0.008848% increase in a borrower's rate.
+* An additional **deliquency over 30 days** corresponds to a 0.01042% increase in a borrower's rate.
+
+
+The following is the interpretation of elements in the regression model that *negatively* impact a borrower's rate:
+
+* For every additional $1 added to the **amount funded**, a borrower's rate decreases by 0.0002282%
+* Using **prosper rating B** as a baseline, borrowers with a **prosper rating of D** on average have a borrower's rate that is lower by 3.508%.
+* Borrower's categorized under **lender indicator 1** on average have a borrower's rate that is 0.1732% lower than those who are categorized under **lender indicator 0**.
+* An additional **open credit line** corresponds to a 0.00585% decrease in a borrower's rate, on average.
+* A $1 increase in a person's **revolving balance** corresponds to a 0.0000006668% decrease in a borrower's rate
+* A 1% increase in a person's **revolving balance percent** corresponds to a 0.002608% decrease in a borrower's rate.
+* Not being a **homeowner** decreases a borrower's rate by 0.1319% on average.
+
 
 ```{r}
 
