@@ -9,9 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Linear Regression
+#Introduction
 
-## Import and Clean Data
+In this report, two elements of credit risk are assessed using regression analysis: Interest Rate Evaluation and Loan Default Likelihood. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
+This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. 
+
+# Import and Clean Data
 
 ```{r}
 #Code for importing and cleaning data
@@ -64,9 +67,23 @@ unique(project_list$occupation, incomparables = FALSE)
 ```
 
 
-## Regression Models
+# Linear Regression
 
-### Main Effects Model
+Recall: we are trying to identify which elements significantly impact the determination of a borrower's interest rate. 
+
+## Main Effects Linear Regression Model
+
+Model 1 is a main effects linear regression model.The target variable in this model is **borrower rate**.The independent variables are all relevant numeric variables and factor variables that don't have too many factor levels given in the data set.
+
+Using a p-value of < 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes the significant variables. 
+
+We interpret Model 2 in the following manner. 
+
+* For each additional number of days, a borrower's rate increases by 0.0042 on average. 
+* Increasing the principal balance by $1 increases a borrower's rate by 0.0000245 on average. 
+* Using loan status 1 (Current), as a baseline, those with loan status 2 (Chargeoff) on average have a borrower's rate that is higher by 1.574. 
+* Those with loan status 3 on average have a borrower's rate that is higher than those with loan status 1 by 0.4938. 
+* Those with loan status 4 on average have a borrower's rate that is higher than those with loan status 1 by 0.1411.   
 
 ```{r}
 
@@ -78,18 +95,21 @@ summary(model1)
 model2 <- lm(borrower_rate ~ number_of_days	+ principal_balance	+ loan_status	+ amount_funded	+ prosper_rating	+ listing_term	+ listing_monthly_payment	+ dti_wprosper_loan + lender_indicator	+ inquiries_last6_months	+ open_credit_lines	+  bankcard_utilization	+ revolving_balance	+ revolving_available_percent	+ total_inquiries	+ delinquencies_over30_days	+ is_homeowner, data = project_list)
 summary(model2)
 ```
-# Logistic Regression
+# Logistic Regression 
 
-## Import and Clean Data
-
+## Clean Data
 ```{r}
 #Create new column for default or not
-project_list$default_status <- 0
-project_list$default_status <- ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, project_list$default_status)
-project_list$default_status <- as.integer(project_list$default_status)
+project_list$default_status <- as.integer(ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, 0))
 
 str(project_list)
 summary(project_list)
+
+```
+
+## Main Effects Linear Regression Model
+
+```{r}
 
 
 #logistic regression with significant variables
