@@ -1,6 +1,6 @@
 ---
 title: "Prosper_Group_4"
-author: "Yoshitomo Okada"
+author: "Ariella Katherine Rose, Benjamin Bernard Lewis, Rahul Jain, Yoshitomo Okada"
 date: "2021/3/26"
 output: html_document
 ---
