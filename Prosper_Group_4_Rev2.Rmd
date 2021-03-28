@@ -52,6 +52,9 @@ project_list$occupation <- factor(project_list$occupation, labels = c("Other", "
 "Principal", "Nurse (LPN)", "Postal Service", "Teacher's Aide", "Professor", "Dentist", "Pilot - Private/Commercial", "Engineer - Chemical", "Landscaping", "Religious", "Student - College Graduate Student", "Homemaker", "Scientist", "Clergy", "Judge", "Nurse's Aide", "Tradesman - Carpenter", "Car Dealer", "Flight Attendant", "Student - Community College", "Psychologist", "Student - College Senior", "Student - College Junior", "Student - College Freshman", "Student - College Sophomore", "Student - Technical School", ""
 ))
 
+#Change negative values to NA
+project_list$months_employed <- ifelse(project_list$months_employed < 0, NA, project_list$months_employed)
+
 #Remove NAs
 project_list$months_employed <- ifelse(is.na(project_list$months_employed),mean(project_list$months_employed,na.rm = TRUE),project_list$months_employed)
 project_list$installment_balance <- ifelse(is.na(project_list$installment_balance),mean(project_list$installment_balance,na.rm = TRUE),project_list$installment_balance)
