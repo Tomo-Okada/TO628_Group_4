@@ -132,7 +132,7 @@ summary(project_list)
 
 ```
 
-## Main Effects Linear Regression Model
+## Main Effects Logistic Regression Model
 
 ```{r}
 
