@@ -1,0 +1,149 @@
+---
+title: "Class Code for 0316"
+author: "Sanjeev Kumar"
+date: "March 16, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+In this report, two elements of credit risk are assessed using regression analysis: **Interest Rate Determination** and **Loan Default Likelihood**. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
+This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. 
+
+# Import and Clean Data
+
+```{r}
+#Code for importing and cleaning data
+
+project_list <- read.csv("ProjectA_Listings2013.csv")
+
+
+
+```
+
+
+
+```{r}
+#Convert columns to factors
+project_list$is_homeowner <- as.factor(project_list$is_homeowner)
+project_list$prosper_rating <- as.factor(project_list$prosper_rating)
+project_list$scorex <- as.factor(project_list$scorex)
+project_list$income_verifiable <- as.factor(project_list$income_verifiable)
+project_list$employment_status_description <- as.factor(project_list$employment_status_description)
+project_list$occupation <- as.factor(project_list$occupation)
+project_list$loan_status <- as.factor(project_list$loan_status)
+project_list$listing_term <- as.factor(project_list$listing_term)
+project_list$prosper_score <- as.factor(project_list$prosper_score)
+project_list$listing_category_id <- as.factor(project_list$listing_category_id)
+project_list$income_range <- as.factor(project_list$income_range)
+project_list$lender_indicator <- as.factor(project_list$lender_indicator)
+
+#lets change the labels for the factors
+project_list$is_homeowner <- factor(project_list$is_homeowner, labels = c("TRUE", "FALSE"))
+project_list$prosper_rating <- factor(project_list$prosper_rating, labels = c("B", "D", "E", "HR", "A", "AA", "C"))
+project_list$scorex <- factor(project_list$scorex, labels = c("702-723", "650-664", "620-639", "640-649", "748-777", "665-689", "778+", "600-619", "690-701", "724-747", "< 600"))
+project_list$income_verifiable <- factor(project_list$income_verifiable, labels = c("TRUE", "FALSE"))
+project_list$employment_status_description <- factor(project_list$employment_status_description, labels = c("Employed", "Other", "Full-time", "Self-employed", "Not employed", "Part-time", "Retired"))
+project_list$occupation <- factor(project_list$occupation, labels = c("Other", "Sales - Retail", "Computer Programmer", "Teacher", "Executive", "Realtor", "Tradesman - Mechanic", "Medical Technician", "Administrative Assistant", "Pharmacist", "Accountant/CPA", "Professional", "Attorney", "Nurse (RN)", "Police Officer/Correction Officer", "Retail Management", "Analyst", "Construction", "Sales - Commission", "Skilled Labor", "Clerical", "Civil Service", "Engineer - Electrical", "Truck Driver", "Military Enlisted", "Waiter/Waitress", "Engineer - Mechanical", "Food Service Management", "Laborer", "Social Worker", "Architect", "Fireman", "Tradesman - Electrician", "Doctor", "Investor", "Bus Driver", "Chemist", "Food Service", "Biologist", "Military Officer", "Tradesman - Plumber",
+"Principal", "Nurse (LPN)", "Postal Service", "Teacher's Aide", "Professor", "Dentist", "Pilot - Private/Commercial", "Engineer - Chemical", "Landscaping", "Religious", "Student - College Graduate Student", "Homemaker", "Scientist", "Clergy", "Judge", "Nurse's Aide", "Tradesman - Carpenter", "Car Dealer", "Flight Attendant", "Student - Community College", "Psychologist", "Student - College Senior", "Student - College Junior", "Student - College Freshman", "Student - College Sophomore", "Student - Technical School", ""
+))
+
+#Remove NAs
+project_list$months_employed <- ifelse(is.na(project_list$months_employed),mean(project_list$months_employed,na.rm = TRUE),project_list$months_employed)
+project_list$installment_balance <- ifelse(is.na(project_list$installment_balance),mean(project_list$installment_balance,na.rm = TRUE),project_list$installment_balance)
+
+#lets take a look at structure and summary
+str(project_list)
+summary(project_list)
+
+```
+
+```{r}
+unique(project_list$occupation, incomparables = FALSE)
+```
+
+
+# Linear Regression
+
+Recall: we are trying to identify which elements significantly impact the determination of a borrower's interest rate. 
+
+## Main Effects Linear Regression Model
+
+Model 1 is a main effects linear regression model.The target variable in this model is **borrower rate**.The independent variables are all relevant numeric variables and factor variables that don't have too many factor levels given in the data set.
+
+Using a p-value of < 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes the significant variables. 
+
+The following is the interpretation of the elements in the regression model that *positively* impact a borrower's rate:
+
+* For each additional **number of days**, a borrower's rate increases by 0.0042% on average. 
+* Increasing the **principal balance** by $1 increases a borrower's rate by 0.0000245% on average. 
+* Using **loan status 1** (CURRENT) as a baseline, borrowers with **loan status 2** (CHARGEOFF) on average have a borrower's rate that is higher by 1.574%. 
+* Those with **loan status 3** (DEFAULTED) on average have a borrower's rate that is higher than those with loan status 1 by 0.4938%. 
+* Those with **loan status 4** (COMPLETED) on average have a borrower's rate that is higher than those with loan status 1 by 0.1411%.   
+* Using **prosper rating B** as a baseline, borrowers with a **prosper rating of E** on average have a borrower's rate that is higher by 3.435%..
+* Those with a **prosper rating of HR** on average have a borrower's rate that is higher by 7.040%.
+* Those with a **prosper rating of A** on average have a borrower's rate that is higher by 11.24%.
+* Those with a **prosper rating of AA** on average have a borrower's rate that is higher by 11.56%.
+* Those with a **prosper rating of C** on average have a borrower's rate that is higher by 19.08%.
+* Using **listing term 12** as a baseline, borrower's categorized under **listing term 36**, or whose listing term was 36 months, typically had a borrower's rate that was higher by 6.818%. 
+* Borrower's categorized under **listing term 60**, or whose listing term was 60 months, typically had a borrower's rate that was higher by 8.236%. 
+* A $1 increase in a borrower's **listing monthly payment** corresponds to an 0.00672% increase in a borrower's rate.
+* For **dti_wprosper_loan** I am unsure how to interpret these results. Does anyone know what dti_wprosper_loan is? and why are so many of the values so low while a few of the values are 1,000,000?
+* One additional **inquiry in the last 6 months** corresponds to a 0.05487% increase in a borrower's rate.
+* An increase in **bank card utilization** by 1% increases a borrower's rate by 0.002307%
+* An additional inquiry to **total inquiries** corresponds to a 0.008848% increase in a borrower's rate.
+* An additional **deliquency over 30 days** corresponds to a 0.01042% increase in a borrower's rate.
+
+
+The following is the interpretation of elements in the regression model that *negatively* impact a borrower's rate:
+
+* For every additional $1 added to the **amount funded**, a borrower's rate decreases by 0.0002282%
+* Using **prosper rating B** as a baseline, borrowers with a **prosper rating of D** on average have a borrower's rate that is lower by 3.508%.
+* Borrower's categorized under **lender indicator 1** on average have a borrower's rate that is 0.1732% lower than those who are categorized under **lender indicator 0**.
+* An additional **open credit line** corresponds to a 0.00585% decrease in a borrower's rate, on average.
+* A $1 increase in a person's **revolving balance** corresponds to a 0.0000006668% decrease in a borrower's rate
+* A 1% increase in a person's **revolving balance percent** corresponds to a 0.002608% decrease in a borrower's rate.
+* Not being a **homeowner** decreases a borrower's rate by 0.1319% on average.
+
+
+```{r}
+
+#All relevant variables to predict borrower rate
+model1 <- lm(borrower_rate ~ number_of_days	+ principal_balance	+ loan_status	+ amount_funded	+ prosper_rating	+ listing_term	+ listing_monthly_payment	+ scorex	+ prosper_score	+ listing_category_id	+income_range	+ stated_monthly_income	+ income_verifiable	+ dti_wprosper_loan	+ months_employed	+ lender_indicator	+ monthly_debt	+ current_delinquencies	+ delinquencies_last7_years	+ public_records_last10_years	+ public_records_last12_months	+ credit_lines_last7_years	+ inquiries_last6_months	+ amount_delinquent	+ current_credit_lines	+ open_credit_lines	+  bankcard_utilization	+ total_open_revolving_accounts	+ installment_balance	+ real_estate_balance	+ revolving_balance	+ real_estate_payment	+ revolving_available_percent	+ total_inquiries	+  total_trade_items	+ satisfactory_accounts	+  now_delinquent_derog	+ was_delinquent_derog	+ delinquencies_over30_days	+ delinquencies_over60_days	+ delinquencies_over90_days	+ is_homeowner + employment_status_description + occupation	, data = project_list)
+summary(model1)
+
+#Only significant variables to predict borrower rate
+model2 <- lm(borrower_rate ~ number_of_days	+ principal_balance	+ loan_status	+ amount_funded	+ prosper_rating	+ listing_term	+ listing_monthly_payment	+ dti_wprosper_loan + lender_indicator	+ inquiries_last6_months	+ open_credit_lines	+  bankcard_utilization	+ revolving_balance	+ revolving_available_percent	+ total_inquiries	+ delinquencies_over30_days	+ is_homeowner, data = project_list)
+summary(model2)
+```
+# Logistic Regression 
+
+## Clean Data
+```{r}
+#Create new column for default or not
+project_list$default_status <- as.integer(ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, 0))
+
+str(project_list)
+summary(project_list)
+
+```
+
+## Main Effects Linear Regression Model
+
+```{r}
+
+
+#logistic regression with significant variables
+logit.model <- glm(default_status ~ number_of_days + principal_balance + amount_funded + prosper_rating + borrower_rate + listing_term + listing_monthly_payment + lender_indicator + delinquencies_last7_years + inquiries_last6_months + bankcard_utilization + revolving_balance + satisfactory_accounts,data = project_list, family = "binomial")
+
+summary(logit.model)
+
+```
+
+
+
+
