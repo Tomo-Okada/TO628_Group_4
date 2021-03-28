@@ -1,7 +1,7 @@
 ---
-title: "Class Code for 0316"
-author: "Sanjeev Kumar"
-date: "March 16, 2021"
+title: "Prosper_Group_4"
+author: "Ariella Katherine Rose, Benjamin Bernard Lewis, Rahul Jain, Yoshitomo Okada"
+date: "March 28, 2021"
 output: html_document
 ---
 
