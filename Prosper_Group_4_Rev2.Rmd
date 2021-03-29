@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 # {.tabset}
 ## Introduction
 
-In this report, two elements of credit risk are assessed using regression analysis: **Interest Rate Determination** and **Loan Default Likelihood**. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
+In this report, two elements of credit risk are assessed using regression analysis: **Interest Rate Determination** and **Loan Default Likelihood**. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities that could benefit Prosper.com. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
 
-This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. Finally, this report ends by describing arbitrage opportunities found from the analysis. We define arbitrage opportunities as circumstances in which loan providers may be charging too high of an interest rate on someone who is unlikely to default on a loan. Conversely, arbitrage may also be a circumstance where loan providers are charging to low of an interest rate on someone who is very likely to default on a loan.
+This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. Finally, this report ends by describing arbitrage opportunities found in the analysis. We define arbitrage opportunities as circumstances in which loan providers may be charging too high of an interest rate on someone who is unlikely to default on a loan. Conversely, arbitrage may also be a circumstance where loan providers are charging to low of an interest rate on someone who is very likely to default on a loan.
 
 ## Import and Clean Data
 
@@ -70,15 +70,15 @@ summary(project_list)
 
 ## Linear Regression
 
-Recall: we are trying to identify which elements significantly impact the determination of a borrower's interest rate. 
+Recall: we are trying to identify which elements significantly impact the determination of a Prosper borrower's interest rate. 
 
 ### Main Effects Linear Regression Model
 
 Model 1 is a main effects linear regression model.The target variable in this model is **borrower rate**.The independent variables are all relevant numeric variables and factor variables that don't have too many factor levels given in the data set.
 
-Using a p-value of < 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes the significant variables. 
+Using a p-value of < 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes these significant variables. 
 
-The following is the interpretation of the elements in the regression model that *positively* impact a borrower's rate:
+The following is the interpretation of the elements in Model 2 that *positively* impact a borrower's rate:
 
 * For each additional **number of days**, a borrower's rate increases by 0.0042% on average. 
 * Increasing the **principal balance** by $1 increases a borrower's rate by 0.0000245% on average. 
@@ -134,9 +134,9 @@ project_list$default_status <- as.integer(ifelse((project_list$loan_status == 2 
 
 ```
 
-### Main Effects Logistic Regression Model
+Recall: we are trying to identify which elements significantly impact the likelihood of a Prosper borrower defaulting on a loan. 
 
-Recall: we are trying to identify which elements significantly impact the likelihood of a person defaulting on a loan. 
+### Main Effects Logistic Regression Model
 
 The following elements make borrower's *more likely* to default on a loan:
 
