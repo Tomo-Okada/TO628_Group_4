@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Ariella Katherine Rose, Benjamin Bernard Lewis, Rahul Jain, Yoshitomo Okada" />
+<meta name="author" content="Ariella Katherine Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada" />
 
 <meta name="date" content="2021-03-28" />
 
@@ -350,18 +350,21 @@ pre code {
 
 
 <h1 class="title toc-ignore">Prosper_Group_4</h1>
-<h4 class="author">Ariella Katherine Rose, Benjamin Bernard Lewis, Rahul Jain, Yoshitomo Okada</h4>
+<h4 class="author">Ariella Katherine Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada</h4>
 <h4 class="date">March 28, 2021</h4>
 
 </div>
 
 
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>In this report, two elements of credit risk are assessed using regression analysis: <strong>Interest Rate Determination</strong> and <strong>Loan Default Likelihood</strong>. We investigate factors that impact a person’s interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower’s interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan.</p>
+<div id="section" class="section level1 tabset">
+<h1></h1>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this report, two elements of credit risk are assessed using regression analysis: <strong>Interest Rate Determination</strong> and <strong>Loan Default Likelihood</strong>. We investigate factors that impact a person’s interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky.</p>
+<p>This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower’s interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. Finally, this report ends by describing arbitrage opportunities found from the analysis. We define arbitrage opportunities as circumstances in which loan providers may be charging too high of an interest rate on someone who is unlikely to default on a loan. Conversely, arbitrage may also be a circumstance where loan providers are charging to low of an interest rate on someone who is very likely to default on a loan.</p>
 </div>
-<div id="import-and-clean-data" class="section level1">
-<h1>Import and Clean Data</h1>
+<div id="import-and-clean-data" class="section level2">
+<h2>Import and Clean Data</h2>
 <pre class="r"><code>#Code for importing and cleaning data
 
 project_list &lt;- read.csv(&quot;ProjectA_Listings2013.csv&quot;)</code></pre>
@@ -402,8 +405,8 @@ str(project_list)</code></pre>
 ##  $ number_of_days               : int  1095 1095 1095 296 1095 1095 1095 1095 1095 1095 ...
 ##  $ principal_balance            : num  969 0 0 3636 0 ...
 ##  $ loan_status                  : Factor w/ 4 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;: 1 3 4 2 4 4 1 4 4 4 ...
-##  $ loan_status_description      : Factor w/ 4 levels &quot;CHARGEOFF&quot;,&quot;COMPLETED&quot;,..: 3 4 2 1 2 2 3 2 2 2 ...
-##  $ loan_origination_date        : Factor w/ 250 levels &quot;1/10/2013&quot;,&quot;1/11/2013&quot;,..: 14 14 14 14 17 17 17 17 17 17 ...
+##  $ loan_status_description      : chr  &quot;CURRENT&quot; &quot;DEFAULTED&quot; &quot;COMPLETED&quot; &quot;CHARGEOFF&quot; ...
+##  $ loan_origination_date        : chr  &quot;1/3/2013&quot; &quot;1/3/2013&quot; &quot;1/3/2013&quot; &quot;1/3/2013&quot; ...
 ##  $ amount_funded                : num  2000 2000 2000 4000 5500 10000 6500 3000 4000 2200 ...
 ##  $ prosper_rating               : Factor w/ 7 levels &quot;B&quot;,&quot;D&quot;,&quot;E&quot;,&quot;HR&quot;,..: 3 5 6 7 1 3 3 5 5 5 ...
 ##  $ borrower_rate                : num  16.9 24.2 27.9 31.3 12.5 ...
@@ -413,22 +416,22 @@ str(project_list)</code></pre>
 ##  $ prosper_score                : Factor w/ 11 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 7 4 3 7 7 7 5 3 3 6 ...
 ##  $ listing_category_id          : Factor w/ 19 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 12 12 2 3 2 2 2 2 2 2 ...
 ##  $ income_range                 : Factor w/ 7 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 4 6 2 2 4 3 6 5 4 4 ...
-##  $ income_range_description     : Factor w/ 7 levels &quot;$0 &quot;,&quot;$1-24,999&quot;,..: 5 3 2 2 5 4 3 6 5 5 ...
+##  $ income_range_description     : chr  &quot;$50,000-74,999&quot; &quot;$100,000+&quot; &quot;$1-24,999&quot; &quot;$1-24,999&quot; ...
 ##  $ stated_monthly_income        : num  4250 10833 1656 2000 4315 ...
 ##  $ income_verifiable            : Factor w/ 2 levels &quot;TRUE&quot;,&quot;FALSE&quot;: 2 2 2 2 2 2 1 2 2 2 ...
 ##  $ dti_wprosper_loan            : num  1.8e-01 2.0e-01 1.1e-01 9.6e-01 1.3e-01 2.9e-01 1.0e+06 1.7e-01 4.4e-01 2.5e-01 ...
 ##  $ employment_status_description: Factor w/ 7 levels &quot;Employed&quot;,&quot;Other&quot;,..: 1 1 4 2 1 1 7 1 1 1 ...
 ##  $ occupation                   : Factor w/ 68 levels &quot;Other&quot;,&quot;Sales - Retail&quot;,..: 37 37 37 50 14 61 21 37 37 21 ...
 ##  $ months_employed              : num  56 24 74 132 79 39 40 373 196 199 ...
-##  $ borrower_state               : Factor w/ 48 levels &quot;AK&quot;,&quot;AL&quot;,&quot;AR&quot;,..: 16 43 21 41 5 10 14 12 33 21 ...
-##  $ borrower_city                : Factor w/ 6531 levels &quot;7044&quot;,&quot;AARONSBURG&quot;,..: 4390 2019 332 2627 3881 3327 6305 3648 394 2232 ...
+##  $ borrower_state               : chr  &quot;KS&quot; &quot;VA&quot; &quot;MI&quot; &quot;TX&quot; ...
+##  $ borrower_city                : chr  &quot;PARK CITY&quot; &quot;FREDERICKSBURG&quot; &quot;BAY CITY&quot; &quot;HOUSTON&quot; ...
 ##  $ lender_indicator             : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ monthly_debt                 : int  704 2037 106 1738 392 597 3360 1121 2149 1040 ...
 ##  $ current_delinquencies        : int  0 0 17 0 0 0 0 0 0 0 ...
 ##  $ delinquencies_last7_years    : int  0 7 3 0 0 0 0 0 11 0 ...
 ##  $ public_records_last10_years  : int  1 1 0 0 0 0 0 0 0 0 ...
 ##  $ public_records_last12_months : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ first_recorded_credit_line   : Factor w/ 9041 levels &quot;1/1/1951&quot;,&quot;1/1/1957&quot;,..: 8521 4007 285 3965 4677 8689 2461 5611 4338 1307 ...
+##  $ first_recorded_credit_line   : chr  &quot;9/18/1986&quot; &quot;3/20/1997&quot; &quot;1/2/1993&quot; &quot;3/19/2002&quot; ...
 ##  $ credit_lines_last7_years     : int  23 43 37 36 9 10 38 19 57 50 ...
 ##  $ inquiries_last6_months       : int  0 4 0 0 1 0 0 0 1 0 ...
 ##  $ amount_delinquent            : int  0 0 48150 0 0 0 0 0 0 0 ...
@@ -452,21 +455,21 @@ str(project_list)</code></pre>
 ##  $ is_homeowner                 : Factor w/ 2 levels &quot;TRUE&quot;,&quot;FALSE&quot;: 1 2 1 2 1 1 2 1 2 1 ...</code></pre>
 <pre class="r"><code>summary(project_list)</code></pre>
 <pre><code>##  number_of_days   principal_balance loan_status loan_status_description
-##  Min.   :  94.0   Min.   :    0.0   1:15460     CHARGEOFF: 2768        
-##  1st Qu.: 816.0   1st Qu.:    0.0   2: 2768     COMPLETED:13765        
-##  Median : 879.0   Median :  903.8   3: 1549     CURRENT  :15460        
-##  Mean   : 879.3   Mean   : 3004.2   4:13765     DEFAULTED: 1549        
+##  Min.   :  94.0   Min.   :    0.0   1:15460     Length:33542           
+##  1st Qu.: 816.0   1st Qu.:    0.0   2: 2768     Class :character       
+##  Median : 879.0   Median :  903.8   3: 1549     Mode  :character       
+##  Mean   : 879.3   Mean   : 3004.2   4:13765                            
 ##  3rd Qu.: 974.0   3rd Qu.: 4872.1                                      
 ##  Max.   :1095.0   Max.   :32998.2                                      
 ##                                                                        
 ##  loan_origination_date amount_funded   prosper_rating borrower_rate  
-##  11/13/2013:  469      Min.   : 2000   B :5811        Min.   : 5.65  
-##  10/16/2013:  424      1st Qu.: 4000   D :1676        1st Qu.:13.59  
-##  9/24/2013 :  309      Median :10000   E :7407        Median :17.69  
-##  12/17/2013:  298      Mean   :10551   HR:9009        Mean   :18.34  
-##  12/11/2013:  295      3rd Qu.:15000   A :4877        3rd Qu.:22.72  
-##  12/18/2013:  293      Max.   :35000   AA:3834        Max.   :31.65  
-##  (Other)   :31454                      C : 928                       
+##  Length:33542          Min.   : 2000   B :5811        Min.   : 5.65  
+##  Class :character      1st Qu.: 4000   D :1676        1st Qu.:13.59  
+##  Mode  :character      Median :10000   E :7407        Median :17.69  
+##                        Mean   :10551   HR:9009        Mean   :18.34  
+##                        3rd Qu.:15000   A :4877        3rd Qu.:22.72  
+##                        Max.   :35000   AA:3834        Max.   :31.65  
+##                                        C : 928                       
 ##  listing_term listing_monthly_payment     scorex     prosper_score 
 ##  12:  248     Min.   :  41.22         665-689:5585   4      :6321  
 ##  36:20203     1st Qu.: 165.15         600-619:5204   6      :4494  
@@ -475,20 +478,20 @@ str(project_list)</code></pre>
 ##               3rd Qu.: 419.94         &lt; 600  :3633   7      :3883  
 ##               Max.   :2251.51         778+   :2753   2      :3460  
 ##                                       (Other):6555   (Other):7148  
-##  listing_category_id income_range   income_range_description
-##  1      :24723       1:    4      $0            :    4      
-##  2      : 2153       2: 1277      $1-24,999     : 1277      
-##  7      : 1970       3: 8738      $100,000+     : 6466      
-##  3      : 1276       4:10740      $25,000-49,999: 8738      
-##  13     :  700       5: 6240      $50,000-74,999:10740      
-##  15     :  590       6: 6466      $75,000-99,999: 6240      
-##  (Other): 2130       7:   77      Not employed  :   77      
+##  listing_category_id income_range income_range_description
+##  1      :24723       1:    4      Length:33542            
+##  2      : 2153       2: 1277      Class :character        
+##  7      : 1970       3: 8738      Mode  :character        
+##  3      : 1276       4:10740                              
+##  13     :  700       5: 6240                              
+##  15     :  590       6: 6466                              
+##  (Other): 2130       7:   77                              
 ##  stated_monthly_income income_verifiable dti_wprosper_loan  
 ##  Min.   :     0        TRUE : 2143       Min.   :      0.0  
 ##  1st Qu.:  3750        FALSE:31399       1st Qu.:      0.2  
 ##  Median :  5250                          Median :      0.2  
 ##  Mean   :  6162                          Mean   :  62489.1  
-##  3rd Qu.:  7458                          3rd Qu.:      0.4  
+##  3rd Qu.:  7458                          3rd Qu.:      0.3  
 ##  Max.   :618548                          Max.   :1000000.0  
 ##                                                             
 ##  employment_status_description                       occupation   
@@ -499,6 +502,7 @@ str(project_list)</code></pre>
 ##  Not employed :    6           Nurse (RN)                 : 1113  
 ##  Part-time    :   21           Teacher                    : 1089  
 ##  Retired      : 1697           (Other)                    :16668  
+<<<<<<< HEAD
 ##  months_employed borrower_state      borrower_city   lender_indicator
 ##  Min.   :  0.0   CA     : 4421   CHICAGO    :  374   0:31711         
 ##  1st Qu.: 37.0   TX     : 2421   BROOKLYN   :  292   1: 1831         
@@ -507,6 +511,16 @@ str(project_list)</code></pre>
 ##  3rd Qu.:159.0   IL     : 1653   HOUSTON    :  247                   
 ##  Max.   :732.0   OH     : 1347   LOS ANGELES:  216                   
 ##                  (Other):19296   (Other)    :31892                   
+=======
+##  months_employed borrower_state     borrower_city      lender_indicator
+##  Min.   :-35     Length:33542       Length:33542       0:31711         
+##  1st Qu.: 32     Class :character   Class :character   1: 1831         
+##  Median : 83     Mode  :character   Mode  :character                   
+##  Mean   :110                                                           
+##  3rd Qu.:159                                                           
+##  Max.   :732                                                           
+##                                                                        
+>>>>>>> 74447a6f3d476d327b00d6322a51bfd9b498069f
 ##   monthly_debt   current_delinquencies delinquencies_last7_years
 ##  Min.   :    0   Min.   : 0.0000       Min.   : 0.000           
 ##  1st Qu.:  588   1st Qu.: 0.0000       1st Qu.: 0.000           
@@ -524,13 +538,13 @@ str(project_list)</code></pre>
 ##  Max.   :34.000              Max.   :20.000000           
 ##                                                          
 ##  first_recorded_credit_line credit_lines_last7_years inquiries_last6_months
-##  3/1/1996 :   58            Min.   :  2.00           Min.   : 0.0000       
-##  11/1/1995:   49            1st Qu.: 20.00           1st Qu.: 0.0000       
-##  11/1/1996:   49            Median : 27.00           Median : 0.0000       
-##  11/1/1994:   48            Mean   : 28.88           Mean   : 0.8391       
-##  11/1/1989:   47            3rd Qu.: 36.00           3rd Qu.: 1.0000       
-##  11/1/1993:   47            Max.   :117.00           Max.   :15.0000       
-##  (Other)  :33244                                                           
+##  Length:33542               Min.   :  2.00           Min.   : 0.0000       
+##  Class :character           1st Qu.: 20.00           1st Qu.: 0.0000       
+##  Mode  :character           Median : 27.00           Median : 0.0000       
+##                             Mean   : 28.88           Mean   : 0.8391       
+##                             3rd Qu.: 36.00           3rd Qu.: 1.0000       
+##                             Max.   :117.00           Max.   :15.0000       
+##                                                                            
 ##  amount_delinquent  current_credit_lines open_credit_lines bankcard_utilization
 ##  Min.   :     0.0   Min.   : 1.00        Min.   : 1.00     Min.   :0.0000      
 ##  1st Qu.:     0.0   1st Qu.: 8.00        1st Qu.: 7.00     1st Qu.:0.4000      
@@ -579,48 +593,12 @@ str(project_list)</code></pre>
 ##  3rd Qu.: 2.000                         
 ##  Max.   :99.000                         
 ## </code></pre>
-<pre class="r"><code>unique(project_list$occupation, incomparables = FALSE)</code></pre>
-<pre><code>##  [1] Chemist                            Landscaping                       
-##  [3] Nurse (RN)                         Student - Community College       
-##  [5] Clerical                           Professor                         
-##  [7] Student - College Freshman         Architect                         
-##  [9] Computer Programmer                Food Service                      
-## [11] Sales - Retail                     Nurse (LPN)                       
-## [13] Realtor                            Bus Driver                        
-## [15] Military Officer                   Pilot - Private/Commercial        
-## [17] Teacher                            Other                             
-## [19] Police Officer/Correction Officer  Engineer - Chemical               
-## [21] Student - College Graduate Student Attorney                          
-## [23] Accountant/CPA                     Sales - Commission                
-## [25] Student - Technical School         Fireman                           
-## [27]                                    Skilled Labor                     
-## [29] Military Enlisted                  Laborer                           
-## [31] Homemaker                          Executive                         
-## [33] Civil Service                      Student - College Junior          
-## [35] Analyst                            Engineer - Mechanical             
-## [37] Medical Technician                 Pharmacist                        
-## [39] Truck Driver                       Tradesman - Mechanic              
-## [41] Tradesman - Electrician            Student - College Sophomore       
-## [43] Principal                          Investor                          
-## [45] Tradesman - Plumber                Psychologist                      
-## [47] Postal Service                     Retail Management                 
-## [49] Biologist                          Construction                      
-## [51] Social Worker                      Dentist                           
-## [53] Clergy                             Waiter/Waitress                   
-## [55] Religious                          Professional                      
-## [57] Food Service Management            Doctor                            
-## [59] Student - College Senior           Administrative Assistant          
-## [61] Engineer - Electrical              Car Dealer                        
-## [63] Teacher&#39;s Aide                     Nurse&#39;s Aide                      
-## [65] Judge                              Scientist                         
-## [67] Tradesman - Carpenter              Flight Attendant                  
-## 68 Levels: Other Sales - Retail Computer Programmer Teacher ...</code></pre>
 </div>
-<div id="linear-regression" class="section level1">
-<h1>Linear Regression</h1>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
 <p>Recall: we are trying to identify which elements significantly impact the determination of a borrower’s interest rate.</p>
-<div id="main-effects-linear-regression-model" class="section level2">
-<h2>Main Effects Linear Regression Model</h2>
+<div id="main-effects-linear-regression-model" class="section level3">
+<h3>Main Effects Linear Regression Model</h3>
 <p>Model 1 is a main effects linear regression model.The target variable in this model is <strong>borrower rate</strong>.The independent variables are all relevant numeric variables and factor variables that don’t have too many factor levels given in the data set.</p>
 <p>Using a p-value of &lt; 0.05, the regression model identifies a subset of significant input variables. From here, a second main effects linear regression model (Model 2) is created that only includes the significant variables.</p>
 <p>The following is the interpretation of the elements in the regression model that <em>positively</em> impact a borrower’s rate:</p>
@@ -1069,11 +1047,13 @@ summary(model2)</code></pre>
 ## F-statistic: 2.706e+04 on 25 and 33516 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<div id="logistic-regression" class="section level1">
-<h1>Logistic Regression</h1>
-<div id="clean-data" class="section level2">
-<h2>Clean Data</h2>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
+<div id="clean-data" class="section level3">
+<h3>Clean Data</h3>
+<p>The following code creates the <em>default status</em> variable. Observations with a loan status of 2 (CHARGOFF) or 3 (DEFAULTED) have a <em>default status</em> of 1. All other observations either have a loan status of 1 (CURRENT) or 4 (COMPLETED) and have a <em>default status</em> of 0, meaning they have not defaulted on a loan and/or their account was not dropped.</p>
 <pre class="r"><code>#Create new column for default or not
+<<<<<<< HEAD
 project_list$default_status &lt;- as.integer(ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, 0))
 
 str(project_list)</code></pre>
@@ -1259,9 +1239,33 @@ str(project_list)</code></pre>
 ##  3rd Qu.: 2.000                          3rd Qu.:0.0000  
 ##  Max.   :99.000                          Max.   :1.0000  
 ## </code></pre>
+=======
+project_list$default_status &lt;- as.integer(ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, 0))</code></pre>
+>>>>>>> 74447a6f3d476d327b00d6322a51bfd9b498069f
 </div>
-<div id="main-effects-logistic-regression-model" class="section level2">
-<h2>Main Effects Logistic Regression Model</h2>
+<div id="main-effects-logistic-regression-model" class="section level3">
+<h3>Main Effects Logistic Regression Model</h3>
+<p>Recall: we are trying to identify which elements significantly impact the likelihood of a person defaulting on a loan.</p>
+<p>The following elements make borrower’s <em>more likely</em> to default on a loan:</p>
+<ul>
+<li>Increasing the <strong>principle balance</strong></li>
+<li>Having a <strong>prosper rating of D</strong>, (compared to having a <strong>B prosper rating</strong>)</li>
+<li>An increased <strong>borrower’s rate</strong></li>
+<li>Increasing the <strong>listing’s monthly payments</strong></li>
+<li>The presence of the <strong>lender indicator</strong></li>
+<li>Increasing the number of <strong>satisfactory accounts</strong></li>
+</ul>
+<p>The following elements make borrower’s <em>less likely</em> to default on a loan&quot;</p>
+<ul>
+<li>Increased <strong>number of days</strong></li>
+<li>Increased <strong>amount funded</strong></li>
+<li>Having an <strong>E, HR, A, AA, or C prosper rating</strong>, (compared to having a <strong>B prosper rating</strong>)</li>
+<li>Having a <strong>listing term</strong> that is 36 or 60 months, (compared to a <strong>12 month listing term</strong>)</li>
+<li>Having an increased number of <strong>delinquencies in the last 7 years</strong></li>
+<li>Having an increased number of <strong>inquiries in the last 6 months</strong></li>
+<li>Increased <strong>bankcard utilization</strong></li>
+<li>Increased <strong>revolving balance</strong></li>
+</ul>
 <pre class="r"><code>#logistic regression with significant variables
 logit.model &lt;- glm(default_status ~ number_of_days + principal_balance + amount_funded + prosper_rating + borrower_rate + listing_term + listing_monthly_payment + lender_indicator + delinquencies_last7_years + inquiries_last6_months + bankcard_utilization + revolving_balance + satisfactory_accounts,data = project_list, family = &quot;binomial&quot;)
 
@@ -1310,6 +1314,25 @@ summary(logit.model)</code></pre>
 ## AIC: 14665
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+<div id="arbitrage-opportunities" class="section level2">
+<h2>Arbitrage Opportunities</h2>
+<p>The following are <strong>elements loan providers should consider <em>less</em> when deciding a borrower’s interest rate</strong>. These variables are highlighted because they are significant in the linear regression model for predicting borrower’s rate, but are not significant in predicting whether or not a person will default on a loan.</p>
+<ul>
+<li>dti_wprosper_loan</li>
+<li>open credit lines</li>
+<li>revolving available percent</li>
+<li>total inquiries</li>
+<li>delinquencies over 30 days</li>
+<li>being a homeowner</li>
+</ul>
+<p>The following are <strong>elements loan providers should consider <em>more</em> when deciding a borrower’s interest rate</strong>. These variables are highlighted because they are not significant in predicting borrower’s rate, but are significant in predicting whether or not a person will default on a loan.</p>
+<ul>
+<li>number delinquencies in the last 7 years</li>
+<li>number of satisfactory accounts</li>
+</ul>
+<p>Prosper could use this information to take advantage of the arbitrage opportunities. Prosper could offer a lower interest rate than the market would typically offer to those with lower satisfactory accounts. Prosper can use its knowledge that lower satisfactory accounts reduces the probability of default, giving them an advantage. Additionally, Prosper could offer a lower interest rate when the number of delinquencies in the past 7 months is higher. The market will not likely take this into account, but Prosper understands that this will lead to less likelihood of default. Using these opportunities, Prosper could improve their position in the market and gain share.</p>
 </div>
 </div>
 
