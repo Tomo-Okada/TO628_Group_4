@@ -168,5 +168,17 @@ summary(logit.model)
 
 ## Arbitrage Opportunities
 
+The following are **elements loan providers should consider *less* when deciding a borrower's interest rate**. These variables are highlighted because they are significant in the linear regression model for predicting borrower's rate, but are not significant in predicting whether or not a person will default on a loan.
 
+* dti_wprosper_loan
+* open credit lines
+* revolving available percent
+* total inquiries
+* delinquencies over 30 days
+* being a homeowner
+
+The following are **elements loan providers should consider *more* when deciding a borrower's interest rate**. These variables are highlighted because they are not significant in predicting borrower's rate, but are significant in predicting whether or not a person will default on a loan.
+
+* number delinquencies in the last 7 years
+* number of satisfactory accounts
 
