@@ -1,6 +1,6 @@
 ---
 title: "Prosper_Group_4"
-author: "Ariella Katherine Rose, Benjamin Bernard Lewis, Rahul Jain, Yoshitomo Okada"
+author: "Ariella Katherine Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada"
 date: "March 28, 2021"
 output: html_document
 ---
@@ -9,12 +9,14 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introduction
+# {.tabset}
+## Introduction
 
 In this report, two elements of credit risk are assessed using regression analysis: **Interest Rate Determination** and **Loan Default Likelihood**. We investigate factors that impact a person's interest rate and likelihood to defaulting on a loan, and explore arbitrage opportunities. Elements that are currently perceived to be credit risks, but, based on our models, are not risks will be identified. Similarly, this report will highlight elements that the market does not perceive to be credit risks that are indeed risky. 
-This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. 
 
-# Import and Clean Data
+This analysis begins with cleaning the data. Then, a linear regression model is employed to find the impact of given elements on a borrower's interest rate. After, a logistic regression model is used to discover which elements increase a borrowers likelihood to default on a loan. Finally, this report ends by describing arbitrage opportunities found from the analysis. We define arbitrage opportunities as circumstances in which loan providers may be charging too high of an interest rate on someone who is unlikely to default on a loan. Conversely, arbitrage may also be a circumstance where loan providers are charging to low of an interest rate on someone who is very likely to default on a loan.
+
+## Import and Clean Data
 
 ```{r}
 #Code for importing and cleaning data
@@ -62,16 +64,12 @@ summary(project_list)
 
 ```
 
-```{r}
-unique(project_list$occupation, incomparables = FALSE)
-```
 
-
-# Linear Regression
+## Linear Regression
 
 Recall: we are trying to identify which elements significantly impact the determination of a borrower's interest rate. 
 
-## Main Effects Linear Regression Model
+### Main Effects Linear Regression Model
 
 Model 1 is a main effects linear regression model.The target variable in this model is **borrower rate**.The independent variables are all relevant numeric variables and factor variables that don't have too many factor levels given in the data set.
 
@@ -120,19 +118,43 @@ summary(model1)
 model2 <- lm(borrower_rate ~ number_of_days	+ principal_balance	+ loan_status	+ amount_funded	+ prosper_rating	+ listing_term	+ listing_monthly_payment	+ dti_wprosper_loan + lender_indicator	+ inquiries_last6_months	+ open_credit_lines	+  bankcard_utilization	+ revolving_balance	+ revolving_available_percent	+ total_inquiries	+ delinquencies_over30_days	+ is_homeowner, data = project_list)
 summary(model2)
 ```
-# Logistic Regression 
+## Logistic Regression 
 
-## Clean Data
+### Clean Data
+
+The following code creates the *default status* variable. Observations with a loan status of 2 (CHARGOFF) or 3 (DEFAULTED) have a *default status* of 1. All other observations either have a loan status of 1 (CURRENT) or 4 (COMPLETED) and have a *default status* of 0, meaning they have not defaulted on a loan and/or their account was not dropped.
+
 ```{r}
 #Create new column for default or not
 project_list$default_status <- as.integer(ifelse((project_list$loan_status == 2 | project_list$loan_status == 3), 1, 0))
 
-str(project_list)
-summary(project_list)
 
 ```
 
-## Main Effects Logistic Regression Model
+### Main Effects Logistic Regression Model
+
+Recall: we are trying to identify which elements significantly impact the likelihood of a person defaulting on a loan. 
+
+The following elements make borrower's *more likely* to default on a loan:
+
+* Increasing the **principle balance**
+* Having a **prosper rating of D**, (compared to having a **B prosper rating**)
+* An increased **borrower's rate**
+* Increasing the **listing's monthly payments**
+* The presence of the **lender indicator**
+* Increasing the number of **satisfactory accounts**
+
+
+The following elements make borrower's *less likely* to default on a loan"
+
+* Increased **number of days**
+* Increased **amount funded**
+* Having an **E, HR, A, AA, or C prosper rating**, (compared to having a **B prosper rating**)
+* Having a **listing term** that is 36 or 60 months, (compared to a **12 month listing term**)
+* Having an increased number of **delinquencies in the last 7 years**
+* Having an increased number of **inquiries in the last 6 months**
+* Increased **bankcard utilization**
+* Increased **revolving balance**
 
 ```{r}
 
@@ -144,6 +166,7 @@ summary(logit.model)
 
 ```
 
+## Arbitrage Opportunities
 
 
 
