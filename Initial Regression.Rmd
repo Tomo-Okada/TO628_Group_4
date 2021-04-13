@@ -1,0 +1,128 @@
+---
+title: "Regression_Final_Project"
+author: "Ariella Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada"
+date: "4/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Load and Clean Data
+```{r}
+library(gmodels)
+library(caret)
+
+#Read Data
+dssalaries <- read.csv("processed_data_toDummies.csv")
+nrow(dssalaries)
+str(dssalaries)
+summary(dssalaries)
+
+#Convert Year to Factor
+dssalaries$Year <- as.factor(dssalaries$Year)
+
+#Convert Hobbyist to Factor
+dssalaries$Hobbyist <- as.factor(dssalaries$Hobbyist)
+
+#Combine all Hobbyist Yes answers to a single factor, leaving two factors for Hobbyist: Yes and No
+levels(dssalaries$Hobbyist) <- c("No","Yes","Yes","Yes","Yes")
+
+#Convert country to factor
+dssalaries$Country <- as.factor(dssalaries$Country)
+
+#Convert EdLevel to factor
+dssalaries$EdLevel <- as.factor(dssalaries$EdLevel)
+
+#Remove all rows missing EdLevel
+dssalaries <- droplevels(dssalaries[!dssalaries$EdLevel=='',])
+
+#Convert Employment to factor
+dssalaries$Employment <- as.factor(dssalaries$Employment)
+
+#Remove all rows missing Employment
+dssalaries <- droplevels(dssalaries[!dssalaries$Employment=='',])
+
+#Replace JobSat NA's with the mean
+dssalaries$JobSat <- ifelse(is.na(dssalaries$JobSat),mean(dssalaries$JobSat,na.rm=TRUE),dssalaries$JobSat)
+
+#Convert OrgSize to factor
+dssalaries$OrgSize <- as.factor(dssalaries$OrgSize)
+
+#Remove all rows missing OrgSize
+dssalaries <- droplevels(dssalaries[!dssalaries$OrgSize=='',])
+dssalaries <- droplevels(dssalaries[!dssalaries$OrgSize=='I prefer not to answer',])
+dssalaries <- droplevels(dssalaries[!dssalaries$OrgSize=="I don't know",])
+
+#Convert UndergradMajor to factor
+dssalaries$UndergradMajor <- as.factor(dssalaries$UndergradMajor)
+
+#Remove all rows missing UndergradMajor
+dssalaries <- droplevels(dssalaries[!dssalaries$UndergradMajor=='',])
+
+#Replace YearsCodePro NA's with the mean
+dssalaries$YearsCodePro <- ifelse(is.na(dssalaries$YearsCodePro),mean(dssalaries$YearsCodePro,na.rm=TRUE),dssalaries$YearsCodePro)
+
+#Remove all rows with any remaining NA values
+dssalaries <- dssalaries[complete.cases(dssalaries),]
+
+#Remove Years that no longer have any data points
+dssalaries <- droplevels(dssalaries[!dssalaries$Year=='2017',])
+dssalaries <- droplevels(dssalaries[!dssalaries$Year=='2018',])
+
+#Create new column for salary above mean
+dssalaries$salaryabove <- ifelse(dssalaries$ConvertedComp > mean(dssalaries$ConvertedComp),1,0)
+
+#Combine some of the EdLevel factors
+levels(dssalaries$EdLevel) <- c("Basic","Basic","Doctorate","Basic","Professionl","Basic")
+
+#Combine some of the Employment factors
+levels(dssalaries$Employment) <- c("Full","Part","Full")
+
+#Combine some of the OrgSize factors
+levels(dssalaries$OrgSize) <- c("500-10K","0-500","10K+","0-500","0-500","0-500","500-10K","500-10K","0-500")
+
+#Combine some of the UndergradMajor factors
+#levels(dssalaries$UndergradMajor) <- c("Eng+CS+IT","Bus","Eng+CS+IT","Art+Hum","Science","Art+Hum","None","Eng+CS+IT","Math","Science","Science","Eng+CS+IT")
+
+```
+# Creating Test and Train Data Sets
+```{r}
+set.seed(12345)
+test_set <- sample(1:nrow(dssalaries),4000)
+
+#Creating test and train data sets
+dssalariestest <- dssalaries[test_set,]
+dssalariestrain <- dssalaries[-test_set,]
+
+```
+
+
+
+# Linear Regression Model
+```{r}
+model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
+summary(model)
+
+model1 <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
+summary(model1)
+
+```
+# Prediction and Results
+```{r}
+#Logistic Regression Prediction
+results <- predict(model1, dssalariestest, type = "response")
+summary(results)
+
+#Converting regression predictions to binary
+binresults <- ifelse(results< 0.5, 0,1)
+
+#Logistic Regression Results
+CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE)
+logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1")
+logresults
+
+```
+
