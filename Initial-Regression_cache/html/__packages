@@ -1,0 +1,9 @@
+base
+gmodels
+e1071
+lattice
+ggplot2
+caret
+class
+C50
+neuralnet

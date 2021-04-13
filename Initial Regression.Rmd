@@ -4,16 +4,24 @@ author: "Ariella Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada"
 date: "4/11/2021"
 output: html_document
 ---
-
+# {.tabset}
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-# Load and Clean Data
-```{r}
+```{r, include=FALSE, echo=FALSE}
+# load libraries
 library(gmodels)
+library(e1071)
 library(caret)
+library(class)
+library(C50)
+library(neuralnet)
+
+```
+
+## Load and Clean Data
+```{r}
 
 #Read Data
 dssalaries <- read.csv("processed_data_toDummies.csv")
@@ -84,11 +92,15 @@ levels(dssalaries$Employment) <- c("Full","Part","Full")
 #Combine some of the OrgSize factors
 levels(dssalaries$OrgSize) <- c("500-10K","0-500","10K+","0-500","0-500","0-500","500-10K","500-10K","0-500")
 
+# nULL uneeded variables
+dssalaries$ConvertedComp <- NULL
+dssalaries$Country <- NULL
+
 #Combine some of the UndergradMajor factors
 #levels(dssalaries$UndergradMajor) <- c("Eng+CS+IT","Bus","Eng+CS+IT","Art+Hum","Science","Art+Hum","None","Eng+CS+IT","Math","Science","Science","Eng+CS+IT")
 
 ```
-# Creating Test and Train Data Sets
+## Creating Test and Train Data Sets
 ```{r}
 set.seed(12345)
 test_set <- sample(1:nrow(dssalaries),4000)
@@ -101,7 +113,7 @@ dssalariestrain <- dssalaries[-test_set,]
 
 
 
-# Linear Regression Model
+## Lostistic Regression Model
 ```{r}
 model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
 summary(model)
@@ -110,7 +122,7 @@ model1 <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradM
 summary(model1)
 
 ```
-# Prediction and Results
+## Prediction and Results
 ```{r}
 #Logistic Regression Prediction
 results <- predict(model1, dssalariestest, type = "response")
@@ -123,6 +135,123 @@ binresults <- ifelse(results< 0.5, 0,1)
 CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE)
 logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1")
 logresults
+
+```
+
+## Getting Data Ready for Analysis
+
+```{r, cache=T}
+
+
+dssalaries_m <- as.data.frame(model.matrix(~.-1,dssalaries))
+str(dssalaries_m)
+summary(dssalaries_m)
+
+#Normalize the data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+# we are going to normalize everything 
+dssalaries_norm <- as.data.frame(lapply(dssalaries_m, normalize))
+summary(dssalaries_norm)
+
+# create training and testing dataset with normalized data
+set.seed(12345)
+test_set <- sample(1:nrow(dssalaries_norm),4000)
+
+#Creating test and train data sets
+dssalariestest_norm <- dssalaries_norm[test_set,]
+dssalariestrain_norm <- dssalaries_norm[-test_set,]
+
+
+```
+
+## KNN Model
+```{r, cache=T}
+dssalaries_norm_n<-dssalaries_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
+
+dssal_knn_train<-dssalariestrain_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
+dssal_knn_test<-dssalariestest_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
+dssal_knn_train_label<-dssalariestrain_norm[,which(colnames(dssalaries_norm)=="salaryabove" )]
+dssal_knn_test_label<-dssalariestest_norm[,which(colnames(dssalaries_norm)=="salaryabove" )]
+
+dssal_knn_test_pred <- knn(train = dssal_knn_train, test = dssal_knn_test,
+                      cl = dssal_knn_train_label, k=round(sqrt(nrow(dssalaries_norm))))
+
+confusionMatrix(as.factor(dssal_knn_test_pred),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+
+```
+
+## ANN Model
+
+```{r, cache=T}
+
+# simple ANN with only a single hidden neuron
+dssal_ann_model <- neuralnet(formula = salaryabove ~ .,
+                              data = dssalariestrain_norm)
+
+
+# visualize the network topology
+plot(dssal_ann_model)
+
+## Step 4: Evaluating model performance ----
+# obtain model results
+model_results <- compute(dssal_ann_model, dssalariestest_norm[-which(colnames(dssalaries_norm)=="salaryabove" )])
+# obtain predicted strength values
+predicted_sal <- model_results$net.result
+
+predicted_sal2<-ifelse(predicted_sal > 0.5,1,0)
+
+
+confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+
+
+```
+
+## Decision Tree
+```{r}
+dssalariestrain_norm$salaryabove <- as.factor(dssalariestrain_norm$salaryabove)
+dssalariestest_norm$salaryabove <- as.factor(dssalariestest_norm$salaryabove)
+
+dssal_DT_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm)
+plot(dssal_DT_model)
+summary(dssal_DT_model)
+
+
+dssal_DT_predict <- predict(dssal_DT_model, dssalariestest_norm)
+
+orig<-confusionMatrix(as.factor(dssal_DT_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+
+
+## cost model
+error_cost <- matrix(c(0,2,1,0), nrow=2)
+error_cost
+
+dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs = error_cost)
+dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
+
+cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+orig
+cost
+```
+
+## Stacked Model
+```{r}
+# Predictions Dataframe
+combined<-data.frame(ann=as.numeric(as.character(predicted_sal2)),knn=as.numeric(as.character(dssal_knn_test_pred)),log=as.numeric(as.character(binresults)),dt=as.numeric(as.character(dssal_DT_predict)), actual=dssalariestest_norm$salaryabove)
+combined
+
+combined_test <- combined[1:1000,]
+combined_train <- combined[1001:4000,]
+
+stacked<-C5.0(actual~. ,data=combined_train)
+plot(stacked)
+summary(stacked)
+
+final_predict <- predict(stacked, combined_test)
+
+confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
 
 ```
 
