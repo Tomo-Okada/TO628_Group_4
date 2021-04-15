@@ -20,6 +20,9 @@ library(neuralnet)
 
 ```
 
+## Introduction
+
+
 ## Load and Clean Data
 ```{r}
 
@@ -177,7 +180,7 @@ dssal_knn_train_label<-dssalariestrain_norm[,which(colnames(dssalaries_norm)=="s
 dssal_knn_test_label<-dssalariestest_norm[,which(colnames(dssalaries_norm)=="salaryabove" )]
 
 dssal_knn_test_pred <- knn(train = dssal_knn_train, test = dssal_knn_test,
-                      cl = dssal_knn_train_label, k=round(sqrt(nrow(dssalaries_norm))))
+                      cl = dssal_knn_train_label, k=round(sqrt(nrow(dssalariestrain_norm))))
 
 confusionMatrix(as.factor(dssal_knn_test_pred),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 
@@ -232,8 +235,7 @@ dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs 
 dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
 
 cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-orig
-cost
+
 ```
 
 ## Stacked Model
@@ -255,3 +257,4 @@ confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positiv
 
 ```
 
+## Discussion
