@@ -252,7 +252,7 @@ stacked<-C5.0(actual~. ,data=combined_train)
 plot(stacked)
 summary(stacked)
 
-final_predict <- predict(stacked, combined_test)m
+final_predict <- predict(stacked, combined_test)
 
 confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
 
@@ -287,7 +287,7 @@ ctrl <- trainControl(method = "cv", number = 10,
 
 # use expand.grid() to create grid of tuning parameters
 grid <- expand.grid(.model = "tree",
-                    .trials = c(1, 5, 10, 15, 20, 25, 30, 35),
+                    .trials = c(1, 2, 3, 4, 5),
                     .winnow = "FALSE")
 
 # look at the result of expand.grid()
