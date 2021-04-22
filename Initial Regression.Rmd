@@ -17,6 +17,7 @@ library(caret)
 library(class)
 library(C50)
 library(neuralnet)
+library(irr)
 
 ```
 
@@ -256,5 +257,50 @@ final_predict <- predict(stacked, combined_test)
 confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
 
 ```
+
+## Automated 10 Fold CV
+
+```{r}
+set.seed(1234)
+folds <- createFolds(combined$actual, k = 10)
+
+cv_results <- lapply(folds, function(x) {
+  combined_train <- combined[-x, ]
+  combined_test <- combined[x, ]
+  combined_model <- C5.0(actual ~ ., data = combined_train)
+  combined_pred <- predict(combined_model, combined_test)
+  combined_actual <- combined_test$actual
+  kappa <- kappa2(data.frame(combined_actual, combined_pred))$value
+  return(kappa)
+})
+
+str(cv_results)
+mean(unlist(cv_results))
+```
+
+## Tuned Model
+```{r}
+## Customizing the tuning process ----
+# use trainControl() to alter resampling strategy
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
+# use expand.grid() to create grid of tuning parameters
+grid <- expand.grid(.model = "tree",
+                    .trials = c(1, 2, 3, 4, 5),
+                    .winnow = "FALSE")
+
+# look at the result of expand.grid()
+grid
+
+# customize train() with the control list and grid of parameters 
+set.seed(300)
+m <- train(actual ~ ., data = combined, method = "C5.0",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid)
+m
+```
+
 
 ## Discussion
