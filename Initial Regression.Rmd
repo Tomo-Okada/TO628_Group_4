@@ -117,7 +117,7 @@ dssalariestrain <- dssalaries[-test_set,]
 
 
 
-## Lostistic Regression Model
+## Logistic Regression Model
 ```{r}
 model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
 summary(model)
@@ -236,7 +236,7 @@ dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs 
 dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
 
 cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-
+cost
 ```
 
 ## Stacked Model
