@@ -304,3 +304,14 @@ m
 
 
 ## Discussion
+
+Data-related jobs are considered the sexiest career of 2021. Because of the increasing demand for data specialists, many professionals expect a remarkably high compensation for performing jobs in this field. Thus, we decided to evaluate the impact different variables have on the expected salary, so we could adjust our expectations to the current job market.
+
+Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $62.6k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50). 
+
+According to the Logistic Regression Model results, we could find out some crucial factors for a higher salary.
+For instance, an education level that is the highest level of formal education that candidates have completed shows interesting insights. The Professional degree (JD, MD, etc., not included MBA) shows a statistically lower probability of gaining above mean salary than the Basic (Master, Bachelor, or lower). In contrast, Doctorate education has a positive impact on their salary. We interpreted this result that a professional degree is not common in the data science field yet. High education in different areas is not necessary to lead to higher compensation in data science jobs.
+Also, we confirmed that a full-time job offers a significantly higher salary than a part-timer, independent contractor, freelancer, or self-employed data scientist.
+We can also say that organizations which employ more than 10k show higher salary. Which means that even though job offer from venture company seems attractive about challenging opportunity, future skill growth, and right of autonomy, the overall well-established company would offer stable compensation for data scientists.
+One exciting finding is that undergrad majors in Computer science, Information systems, or Web development/web design are not statistically positive factors for a higher salary of data scientists. This seems counter to our intuition, but we concluded that data science skills are required in various business fields. In other words, the person who can mash up a specialty in each field and data science skills are scarce in job markets, and they gain higher salary than the specialized person only in typical computer science fields.
+
