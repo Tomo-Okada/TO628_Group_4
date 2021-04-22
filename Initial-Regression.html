@@ -369,60 +369,76 @@ nrow(dssalaries)</code></pre>
 <pre class="r"><code>str(dssalaries)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    33601 obs. of  14 variables:
 ##  $ Year                                         : int  2017 2017 2017 2017 2017 2017 2017 2017 2017 2017 ...
-##  $ Hobbyist                                     : chr  &quot;Yes, both&quot; &quot;Yes, I program as a hobby&quot; &quot;No&quot; &quot;Yes, I program as a hobby&quot; ...
+##  $ Hobbyist                                     : Factor w/ 5 levels &quot;No&quot;,&quot;Yes&quot;,&quot;Yes, both&quot;,..: 3 5 1 5 3 5 1 1 5 3 ...
 ##  $ ConvertedComp                                : num  43750 51282 25000 100000 27000 ...
-##  $ Country                                      : chr  &quot;United Kingdom&quot; &quot;Denmark&quot; &quot;Israel&quot; &quot;United States&quot; ...
-##  $ EdLevel                                      : chr  &quot;Bachelor&#39;s degree&quot; &quot;Some college/university study without earning a bachelor&#39;s degree&quot; &quot;Some college/university study without earning a bachelor&#39;s degree&quot; &quot;Some college/university study without earning a bachelor&#39;s degree&quot; ...
-##  $ Employment                                   : chr  &quot;Employed full-time&quot; &quot;Employed part-time&quot; &quot;Employed full-time&quot; &quot;Employed full-time&quot; ...
+##  $ Country                                      : Factor w/ 180 levels &quot;Afghanistan&quot;,..: 167 43 76 169 165 169 29 29 125 169 ...
+##  $ EdLevel                                      : Factor w/ 11 levels &quot;&quot;,&quot;Associate degree&quot;,..: 3 11 11 11 7 3 3 11 3 11 ...
+##  $ Employment                                   : Factor w/ 4 levels &quot;&quot;,&quot;Employed full-time&quot;,..: 2 3 2 2 2 2 2 2 2 2 ...
 ##  $ JobSat                                       : int  4 10 6 5 7 10 4 8 10 10 ...
-##  $ OrgSize                                      : chr  &quot;2 to 9 employees&quot; &quot;100 to 499 employees&quot; &quot;5,000 to 9,999 employees&quot; &quot;20 to 99 employees&quot; ...
-##  $ UndergradMajor                               : chr  &quot;Computer science&quot; &quot;Computer science&quot; &quot;Computer science&quot; &quot;Computer science&quot; ...
+##  $ OrgSize                                      : Factor w/ 12 levels &quot;&quot;,&quot;1,000 to 4,999 employees&quot;,..: 6 5 8 7 5 7 7 2 6 6 ...
+##  $ UndergradMajor                               : Factor w/ 16 levels &quot;&quot;,&quot;Another engineering discipline&quot;,..: 6 6 6 6 6 6 6 5 9 6 ...
 ##  $ YearsCodePro                                 : int  2 3 4 15 5 5 10 9 1 16 ...
 ##  $ Data.scientist.or.machine.learning.specialist: int  1 1 1 0 0 0 0 0 0 0 ...
 ##  $ Database.administrator                       : int  1 0 0 1 1 1 1 1 1 1 ...
 ##  $ Data.or.business.analyst                     : int  NA NA NA NA NA NA NA NA NA NA ...
 ##  $ Engineer..data                               : int  NA NA NA NA NA NA NA NA NA NA ...</code></pre>
 <pre class="r"><code>summary(dssalaries)</code></pre>
-<pre><code>##       Year        Hobbyist         ConvertedComp         Country         
-##  Min.   :2017   Length:33601       Min.   :     0.18   Length:33601      
-##  1st Qu.:2018   Class :character   1st Qu.: 24576.00   Class :character  
-##  Median :2019   Mode  :character   Median : 53000.00   Mode  :character  
-##  Mean   :2019                      Mean   : 62593.09                     
-##  3rd Qu.:2019                      3rd Qu.: 87036.00                     
-##  Max.   :2020                      Max.   :299436.00                     
-##                                                                          
-##    EdLevel           Employment            JobSat         OrgSize         
-##  Length:33601       Length:33601       Min.   : 0.000   Length:33601      
-##  Class :character   Class :character   1st Qu.: 5.000   Class :character  
-##  Mode  :character   Mode  :character   Median : 6.000   Mode  :character  
-##                                        Mean   : 6.124                     
-##                                        3rd Qu.: 8.000                     
-##                                        Max.   :10.000                     
-##                                        NA&#39;s   :75                         
-##  UndergradMajor      YearsCodePro   
-##  Length:33601       Min.   : 1.000  
-##  Class :character   1st Qu.: 3.000  
-##  Mode  :character   Median : 6.000  
-##                     Mean   : 8.756  
-##                     3rd Qu.:12.000  
-##                     Max.   :30.000  
-##                     NA&#39;s   :83      
-##  Data.scientist.or.machine.learning.specialist Database.administrator
-##  Min.   :0.0000                                Min.   :0.0000        
-##  1st Qu.:0.0000                                1st Qu.:0.0000        
-##  Median :0.0000                                Median :1.0000        
-##  Mean   :0.3217                                Mean   :0.5401        
-##  3rd Qu.:1.0000                                3rd Qu.:1.0000        
-##  Max.   :1.0000                                Max.   :1.0000        
-##                                                                      
-##  Data.or.business.analyst Engineer..data 
-##  Min.   :0.0000           Min.   :0.000  
-##  1st Qu.:0.0000           1st Qu.:0.000  
-##  Median :0.0000           Median :0.000  
-##  Mean   :0.3215           Mean   :0.304  
-##  3rd Qu.:1.0000           3rd Qu.:1.000  
-##  Max.   :1.0000           Max.   :1.000  
-##  NA&#39;s   :2564             NA&#39;s   :13355</code></pre>
+<pre><code>##       Year                                           Hobbyist    
+##  Min.   :2017   No                                       : 6218  
+##  1st Qu.:2018   Yes                                      :25225  
+##  Median :2019   Yes, both                                :  783  
+##  Mean   :2019   Yes, I contribute to open source projects:  165  
+##  3rd Qu.:2019   Yes, I program as a hobby                : 1210  
+##  Max.   :2020                                                    
+##                                                                  
+##  ConvertedComp                 Country     
+##  Min.   :     0.18   United States : 9098  
+##  1st Qu.: 24576.00   Germany       : 2403  
+##  Median : 53000.00   United Kingdom: 2386  
+##  Mean   : 62593.09   India         : 2101  
+##  3rd Qu.: 87036.00   Canada        : 1355  
+##  Max.   :299436.00   France        :  898  
+##                      (Other)       :15360  
+##                                                               EdLevel     
+##  Bachelor&#39;s degree                                                :14140  
+##  Master&#39;s degree                                                  : 9020  
+##  Some college/university study without earning a bachelor&#39;s degree: 4459  
+##  Doctoral degree                                                  : 1863  
+##  Secondary school                                                 : 1792  
+##  Associate degree                                                 : 1012  
+##  (Other)                                                          : 1315  
+##                                                 Employment        JobSat      
+##                                                      :   40   Min.   : 0.000  
+##  Employed full-time                                  :28673   1st Qu.: 5.000  
+##  Employed part-time                                  : 1501   Median : 6.000  
+##  Independent contractor, freelancer, or self-employed: 3387   Mean   : 6.124  
+##                                                               3rd Qu.: 8.000  
+##                                                               Max.   :10.000  
+##                                                               NA&#39;s   :75      
+##                      OrgSize                            UndergradMajor 
+##  20 to 99 employees      :6861   Computer science              :17015  
+##  100 to 499 employees    :5332                                 : 3086  
+##  10,000 or more employees:4360   Another engineering discipline: 2746  
+##  2 to 9 employees        :4087   Information systems           : 2397  
+##  10 to 19 employees      :3538   Natural science               : 2071  
+##  1,000 to 4,999 employees:3331   Mathematics or statistics     : 1962  
+##  (Other)                 :6092   (Other)                       : 4324  
+##   YearsCodePro    Data.scientist.or.machine.learning.specialist
+##  Min.   : 1.000   Min.   :0.0000                               
+##  1st Qu.: 3.000   1st Qu.:0.0000                               
+##  Median : 6.000   Median :0.0000                               
+##  Mean   : 8.756   Mean   :0.3217                               
+##  3rd Qu.:12.000   3rd Qu.:1.0000                               
+##  Max.   :30.000   Max.   :1.0000                               
+##  NA&#39;s   :83                                                    
+##  Database.administrator Data.or.business.analyst Engineer..data 
+##  Min.   :0.0000         Min.   :0.0000           Min.   :0.000  
+##  1st Qu.:0.0000         1st Qu.:0.0000           1st Qu.:0.000  
+##  Median :1.0000         Median :0.0000           Median :0.000  
+##  Mean   :0.5401         Mean   :0.3215           Mean   :0.304  
+##  3rd Qu.:1.0000         3rd Qu.:1.0000           3rd Qu.:1.000  
+##  Max.   :1.0000         Max.   :1.0000           Max.   :1.000  
+##                         NA&#39;s   :2564             NA&#39;s   :13355</code></pre>
 <pre class="r"><code>#Convert Year to Factor
 dssalaries$Year &lt;- as.factor(dssalaries$Year)
 
@@ -502,8 +518,8 @@ test_set &lt;- sample(1:nrow(dssalaries),4000)
 dssalariestest &lt;- dssalaries[test_set,]
 dssalariestrain &lt;- dssalaries[-test_set,]</code></pre>
 </div>
-<div id="lostistic-regression-model" class="section level2">
-<h2>Lostistic Regression Model</h2>
+<div id="logistic-regression-model" class="section level2">
+<h2>Logistic Regression Model</h2>
 <pre class="r"><code>model &lt;- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= &quot;binomial&quot;)
 summary(model)</code></pre>
 <pre><code>## 
@@ -706,7 +722,7 @@ logresults</code></pre>
 ##                                           
 ##                Accuracy : 0.698           
 ##                  95% CI : (0.6835, 0.7122)
-##     No Information Rate : 0.5852          
+##     No Information Rate : 0.5853          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
 ##                   Kappa : 0.358           
@@ -1016,7 +1032,7 @@ plot(dssal_DT_model)</code></pre>
 ## C5.0.formula(formula = salaryabove ~ ., data = dssalariestrain_norm)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Tue Apr 20 13:04:26 2021
+## C5.0 [Release 2.07 GPL Edition]      Thu Apr 22 14:56:56 2021
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -1238,7 +1254,35 @@ error_cost</code></pre>
 ## used</code></pre>
 <pre class="r"><code>dssal_DT_cost_predict &lt;- predict(dssal_DT_cost_model, dssalariestest_norm)
 
-cost&lt;-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = &quot;1&quot;)</code></pre>
+cost&lt;-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = &quot;1&quot;)
+cost</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 2195 1215
+##          1  146  444
+##                                           
+##                Accuracy : 0.6597          
+##                  95% CI : (0.6448, 0.6744)
+##     No Information Rate : 0.5853          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.2265          
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt; 2.2e-16       
+##                                           
+##             Sensitivity : 0.2676          
+##             Specificity : 0.9376          
+##          Pos Pred Value : 0.7525          
+##          Neg Pred Value : 0.6437          
+##              Prevalence : 0.4148          
+##          Detection Rate : 0.1110          
+##    Detection Prevalence : 0.1475          
+##       Balanced Accuracy : 0.6026          
+##                                           
+##        &#39;Positive&#39; Class : 1               
+## </code></pre>
 </div>
 <div id="stacked-model" class="section level2">
 <h2>Stacked Model</h2>
@@ -5258,7 +5302,7 @@ plot(stacked)</code></pre>
 ## C5.0.formula(formula = actual ~ ., data = combined_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Tue Apr 20 13:04:33 2021
+## C5.0 [Release 2.07 GPL Edition]      Thu Apr 22 14:57:03 2021
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -5408,6 +5452,30 @@ m &lt;- train(actual ~ ., data = combined, method = &quot;C5.0&quot;,
 </div>
 <div id="discussion" class="section level2">
 <h2>Discussion</h2>
+<div id="analysis-scope" class="section level3">
+<h3>Analysis scope</h3>
+<p>Data-related jobs are considered the sexiest career of 2021. Because of the increasing demand for data specialists, many professionals expect a remarkably high compensation for performing jobs in this field. Thus, we decided to evaluate the impact different variables have on the expected salary, so we could adjust our expectations to the current job market.</p>
+<p>Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $62.6k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50 working weeks.).</p>
+</div>
+<div id="logistic-regression-model-results" class="section level3">
+<h3>Logistic Regression Model results</h3>
+<p>According to the Logistic Regression Model results, we could find out some crucial factors for a higher salary among data-related jobs. For instance, an education level that is the highest level of formal education that candidates have completed shows interesting insights. The Professional degree (JD, MD, etc., not included MBA) shows a statistically lower probability of gaining above mean salary than the Basic (Master, Bachelor, or lower). In contrast, Doctorate education has a positive impact on their salary. We interpreted this result that a professional degree is not common in the data-related business field yet. High education in different areas is not necessary to lead to higher compensation in data-related jobs. Also, we confirmed that a full-time job offers a significantly higher salary than a part-timer, independent contractor, freelancer, or self-employed data scientist. We can also say that organizations which employ more than 10k show higher salary. Which means that even though job offer from venture company seems attractive about challenging opportunity, future skill growth, and right of autonomy, the overall well-established company would offer stable compensation for data-related jobs. One exciting finding is that undergrad majors in Computer science, Information systems, or Web development/web design are not statistically positive factors for a higher salary of data-related jobs. This seems counter to our intuition, but we concluded that data-related skills are required in various business fields. In other words, the person who can mash up a specialty in each field and data-related skills are scarce in job markets, and they gain higher salary than the specialized person only in typical and traditional computer science fields. The dataset has the following four specific career types among data-related jobs.</p>
+<ul>
+<li>Data Scientist or Machine Learning Specialist</li>
+<li>Database Administrator</li>
+<li>Data Analyst</li>
+<li>Business Analyst and Data Engineer</li>
+</ul>
+<p>The regression results indicate that Business Analyst and Data Engineer has the highest probability to gain above mean salary. In comparison, Database Administrator and Data Analyst is lower probability than Data Scientist or Machine Learning Specialist. This means that we can expect data scientists to earn above mean salaries than traditional data-related jobs. However, we need to recognize that Business Analyst who utilizes data skills in consulting or Data Engineer who creates new products in the upstream process would earn more than Data Scientist or Machine Learning Specialist.</p>
+</div>
+<div id="machine-learning-model-and-stacked-model-results" class="section level3">
+<h3>Machine Learning Model and Stacked Model results</h3>
+<p>We conducted other analysis using ML algorithms and constructed the second level stacked model. The ANN shows the highest Accuracy <strong>0.7008</strong> and the highest Kappa <strong>0.5852</strong> among individual models. However, the second level combined model could not improve Accuracy and Kappa which is <strong>0.694</strong> and <strong>0.3559</strong> respectively.</p>
+</div>
+<div id="recommendation" class="section level3">
+<h3>Recommendation</h3>
+<p>Based on these results, we concluded that we could utilize this model, especially the ANN model, to predict career success in terms of gaining salary above mean in the areas such as career development center in university or a job-changing advisory service. Though Data Scientist or Machine Learning Specialist career seems attractive among data-related jobs, to secure a higher salary, we would advise candidates to broaden their skill sets to business fields or aim for an engineering position in the upstream process.</p>
+</div>
 </div>
 </div>
 

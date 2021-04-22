@@ -305,13 +305,29 @@ m
 
 ## Discussion
 
+### Analysis scope
 Data-related jobs are considered the sexiest career of 2021. Because of the increasing demand for data specialists, many professionals expect a remarkably high compensation for performing jobs in this field. Thus, we decided to evaluate the impact different variables have on the expected salary, so we could adjust our expectations to the current job market.
 
-Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $62.6k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50). 
+Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $62.6k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50 working weeks.). 
 
-According to the Logistic Regression Model results, we could find out some crucial factors for a higher salary.
-For instance, an education level that is the highest level of formal education that candidates have completed shows interesting insights. The Professional degree (JD, MD, etc., not included MBA) shows a statistically lower probability of gaining above mean salary than the Basic (Master, Bachelor, or lower). In contrast, Doctorate education has a positive impact on their salary. We interpreted this result that a professional degree is not common in the data science field yet. High education in different areas is not necessary to lead to higher compensation in data science jobs.
+### Logistic Regression Model results
+According to the Logistic Regression Model results, we could find out some crucial factors for a higher salary among data-related jobs.
+For instance, an education level that is the highest level of formal education that candidates have completed shows interesting insights. The Professional degree (JD, MD, etc., not included MBA) shows a statistically lower probability of gaining above mean salary than the Basic (Master, Bachelor, or lower). In contrast, Doctorate education has a positive impact on their salary. We interpreted this result that a professional degree is not common in the data-related business field yet. High education in different areas is not necessary to lead to higher compensation in data-related jobs.
 Also, we confirmed that a full-time job offers a significantly higher salary than a part-timer, independent contractor, freelancer, or self-employed data scientist.
-We can also say that organizations which employ more than 10k show higher salary. Which means that even though job offer from venture company seems attractive about challenging opportunity, future skill growth, and right of autonomy, the overall well-established company would offer stable compensation for data scientists.
-One exciting finding is that undergrad majors in Computer science, Information systems, or Web development/web design are not statistically positive factors for a higher salary of data scientists. This seems counter to our intuition, but we concluded that data science skills are required in various business fields. In other words, the person who can mash up a specialty in each field and data science skills are scarce in job markets, and they gain higher salary than the specialized person only in typical computer science fields.
+We can also say that organizations which employ more than 10k show higher salary. Which means that even though job offer from venture company seems attractive about challenging opportunity, future skill growth, and right of autonomy, the overall well-established company would offer stable compensation for data-related jobs.
+One exciting finding is that undergrad majors in Computer science, Information systems, or Web development/web design are not statistically positive factors for a higher salary of data-related jobs. This seems counter to our intuition, but we concluded that data-related skills are required in various business fields. In other words, the person who can mash up a specialty in each field and data-related skills are scarce in job markets, and they gain higher salary than the specialized person only in typical and traditional computer science fields.
+The dataset has the following four specific career types among data-related jobs. 
+
+* Data Scientist or Machine Learning Specialist
+* Database Administrator
+* Data Analyst
+* Business Analyst and Data Engineer
+
+The regression results indicate that Business Analyst and Data Engineer has the highest probability to gain above mean salary. In comparison, Database Administrator and Data Analyst is lower probability than Data Scientist or Machine Learning Specialist. This means that we can expect data scientists to earn above mean salaries than traditional data-related jobs. However, we need to recognize that Business Analyst who utilizes data skills in consulting or Data Engineer who creates new products in the upstream process would earn more than Data Scientist or Machine Learning Specialist. 
+
+### Machine Learning Model and Stacked Model results
+We conducted other analysis using ML algorithms and constructed the second level stacked model. The ANN shows the highest Accuracy **0.7008** and the highest Kappa **0.5852** among individual models. However, the second level combined model could not improve Accuracy and Kappa which is **0.694** and **0.3559** respectively.
+
+### Recommendation
+Based on these results, we concluded that we could utilize this model, especially the ANN model, to predict career success in terms of gaining salary above mean in the areas such as career development center in university or a job-changing advisory service. Though Data Scientist or Machine Learning Specialist career seems attractive among data-related jobs, to secure a higher salary, we would advise candidates to broaden their skill sets to business fields or aim for an engineering position in the upstream process.
 
