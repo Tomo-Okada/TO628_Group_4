@@ -1,9 +1,15 @@
 ---
-title: "Regression_Final_Project"
+title: "Career Consultation and Prediciting Data Science Compensation"
 author: "Ariella Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada"
 date: "4/11/2021"
-output: html_document
+output: 
+  html_document:
+    highlight: pygments
+    theme: sandstone
+
 ---
+
+
 # {.tabset}
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -18,10 +24,18 @@ library(class)
 library(C50)
 library(neuralnet)
 library(irr)
-
 ```
 
 ## Introduction
+
+
+### Welcome to Twerk From Home
+
+Twerk From Home is a Career Consulting Company that helps clients take the next steps towards a successful career. We do the career planning, while you *Twerk From Home!*
+
+A huge factor in deciding one's next career move is compensation. In this report, we target clients who want to transition into, or continue, a career in Data Science. We highlight the factors that enable data professionals to make above average salaries, greater than **$ 64,750.60**, using the data set, “How much does data scientists earn in 2017-2020,” obtained from Stack overflow. We begin by running a logistic regression model to ascertain which variables are significant in increasing someone's likelihood of making an above average salary, and use this information to inform our clients on what decisions they should make to ensure they reach their salary goal. Afterwards, we employ several other predictive models to improve predictive power and accuracy.
+
+Finally, we end with some discussion about our analysis and give recommendations to our clients based on our output on how to secure a high paying data science position. 
 
 
 ## Load and Clean Data
