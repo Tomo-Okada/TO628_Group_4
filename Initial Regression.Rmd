@@ -246,7 +246,7 @@ confusionMatrix(as.factor(dssal_knn_test_pred),as.factor(dssalariestest_norm$sal
 dssal_knn_test_pred1 <- knn(train = dssal_knn_train, test = dssal_knn_test,
                       cl = dssal_knn_train_label, k=13)
 #KNN Model Results Confusion Matrix
-confusionMatrix(as.factor(dssal_knn_test_pred1),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+knnresults <- confusionMatrix(as.factor(dssal_knn_test_pred1),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 
 ```
 
@@ -272,7 +272,7 @@ predicted_sal <- model_results$net.result
 predicted_sal2<-ifelse(predicted_sal > 0.5,1,0)
 
 #ANN model results Confusion Matrix
-confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+annresults <- confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 
 
 ```
@@ -324,8 +324,8 @@ summary(stacked)
 # Stacked model prediction
 final_predict <- predict(stacked, combined_test)
 
-#Stacke model results Confusion Matrix
-confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
+#Stacked model results Confusion Matrix
+stackedresults <- confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
 
 ```
 
@@ -377,9 +377,7 @@ m
 ## Discussion
 
 ### Analysis scope
-Data-related jobs are considered the sexiest career of 2021. Because of the increasing demand for data specialists, many professionals expect a remarkably high compensation for performing jobs in this field. Thus, we decided to evaluate the impact different variables have on the expected salary, so we could adjust our expectations to the current job market.
-
-Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $62.6k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50 working weeks.). 
+Using the data set, “How much does data scientists earn in 2017-2020,” which is the dataset processed from the Stack overflow Annual Developers Survey, we analyzed and predicted how data scientists expect to earn above mean salary among this data set which is $64.75k (Salary converted to annual USD salaries using the exchange rate on each year, assuming 12 working months and 50 working weeks.). 
 
 ### Logistic Regression Model results
 According to the Logistic Regression Model results, we could find out some crucial factors for a higher salary among data-related jobs.
@@ -394,13 +392,28 @@ The dataset has the following four specific career types among data-related jobs
 * Data Analyst
 * Business Analyst and Data Engineer
 
-The regression results indicate that Business Analyst and Data Engineer has the highest probability to gain above mean salary. In comparison, Database Administrator and Data Analyst is lower probability than Data Scientist or Machine Learning Specialist. This means that we can expect data scientists to earn above mean salaries than traditional data-related jobs. However, we need to recognize that Business Analyst who utilizes data skills in consulting or Data Engineer who creates new products in the upstream process would earn more than Data Scientist or Machine Learning Specialist. 
+The regression results indicate that Business Analyst and Data Engineer has the highest probability to gain above mean salary. In comparison, Database Administrator and Data Analyst is lower probability than Data Scientist or Machine Learning Specialist. This means that we can expect data scientists to earn above mean salaries than traditional data-related jobs. However, we need to recognize that Business Analyst who utilizes data skills in consulting or Data Engineer who creates new products in the upstream process would earn more than Data Scientist or Machine Learning Specialist.
+The regression results also show that the number of years of coding experience has the largest impact on salary. More years of coding experience increases the likelihood of earning above the mean salary by 3 times the other variables considered. Clearly, experience is valued as a data scientist and experience leads to greater compensation. The best way to earn more as a data scientist may be to continue to do it for many years.
 
-### Machine Learning Model and Stacked Model results
-We conducted other analysis using ML algorithms and constructed the second level stacked model. The ANN shows the highest Accuracy **0.7008** and the highest Kappa **0.5852** among individual models. However, the second level combined model could not improve Accuracy and Kappa which is **0.694** and **0.3559** respectively.
+Overall, the logistic regression model using variables with only 0.05 or less significance results in an accuracy of **`r round(logresults$overall['Accuracy'],4)*100`**% and a kappa of **`r round(logresults$overall['Kappa'],3)`**.
+
+### KNN Model results
+Various K values were tested to determine the best performing KNN model, starting with the square root of the number of rows (119). The best performing model based on kappa was found at k=13. The model results in an accuracy of **`r round(knnresults$overall['Accuracy'],4)*100`**% and a kappa of **`r round(knnresults$overall['Kappa'],3)`**.
+
+### ANN Model results
+A simple ANN model with one hidden node was created and results in an accuracy of **`r round(annresults$overall['Accuracy'],4)*100`**% and a kappa of **`r round(annresults$overall['Kappa'],3)`**. Various other numbers of hidden nodes were tested and did not result in significantly better results for the added complexity.
+
+### Decision Tree Model results
+A decision tree model showed similar variables of importance as the logistic regression model. The variable used in 100% of decisions is the years of professional coding experience showing its significance to determining salary. The following most used variables are part time versus full time employment and the organization size as discussed previously. Job satisfaction also plays an important role being used in 85.79% of decisions. Further investigation could be performed to understand the relationship between job satisfaction and salary, which could be correlated or causal. Overall, the decision tree model results in an accuracy of **`r round(orig$overall['Accuracy'],4)*100`**% and a kappa of **`r round(orig$overall['Kappa'],3)`**.
+
+### Stacked Model results
+We constructed a second level stacked model. The ANN is the best performing model with an Accuracy of **`r round(annresults$overall['Accuracy'],4)*100`**% and the highest Kappa of **`r round(annresults$overall['Kappa'],3)`** among individual models. The second level combined model uses only the ANN model due to its high performing nature. The second level combined model could not improve Accuracy and Kappa which is **`r round(stackedresults$overall['Accuracy'],4)*100`**% and a kappa of **`r round(stackedresults$overall['Kappa'],3)`**.
+
+### Model Tuning
+Finally, we tuned the second level model using 10 cross validation and various trials for decision tree models. Using 10 fold cross validation reduces over-fitting and increases the reliability of the result. The results of all combinations are similar to results of the original ANN algorithm and better than the single stacked model created. This result shows the reliability of the model using various test and train sets despite the initial stacked model being slightly worse. 3 trials with no winnowing gives us the best performing model based on kappa values and oneSE. Higher kappa values are achieved with higher number of trials, but the value gained does not out-weigh the added complexity of the additional trials. 
 
 ### Recommendation
 Based on these results, we concluded that we could utilize this model, especially the ANN model, to predict career success in terms of gaining salary above mean in the areas such as career development center in university or a job-changing advisory service. Though Data Scientist or Machine Learning Specialist career seems attractive among data-related jobs, to secure a higher salary, we would advise candidates to broaden their skill sets to business fields or aim for an engineering position in the upstream process.
 
 
-Ariel to add details on model tuning and years coding significance later this weekend
+Data source: https://www.kaggle.com/phuchuynguyen/datarelated-developers-survey-by-stack-overflow?select=processed_data_toDummies.csv
