@@ -104,49 +104,48 @@ dssalaries$Country <- NULL
 #levels(dssalaries$UndergradMajor) <- c("Eng+CS+IT","Bus","Eng+CS+IT","Art+Hum","Science","Art+Hum","None","Eng+CS+IT","Math","Science","Science","Eng+CS+IT")
 
 ```
-## Creating Test and Train Data Sets
-```{r}
-set.seed(12345)
-test_set <- sample(1:nrow(dssalaries),4000)
+<!-- ## Creating Test and Train Data Sets -->
+<!-- # ```{r} -->
+<!-- # set.seed(12345) -->
+<!-- # test_set <- sample(1:nrow(dssalaries),4000) -->
+<!-- #  -->
+<!-- # # #Creating test and train data sets -->
+<!-- # # dssalariestest <- dssalaries[test_set,] -->
+<!-- # # dssalariestrain <- dssalaries[-test_set,] -->
+<!-- #  -->
+<!-- # ``` -->
 
-#Creating test and train data sets
-dssalariestest <- dssalaries[test_set,]
-dssalariestrain <- dssalaries[-test_set,]
-
-```
 
 
+<!-- ## Logistic Regression Model -->
+<!-- ```{r} -->
+<!-- model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial") -->
+<!-- summary(model) -->
 
-## Logistic Regression Model
-```{r}
-model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
-summary(model)
+<!-- model1 <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial") -->
+<!-- summary(model1) -->
 
-model1 <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial")
-summary(model1)
+<!-- ``` -->
+<!-- ## Prediction and Results -->
+<!-- ```{r} -->
+<!-- #Logistic Regression Prediction -->
+<!-- results <- predict(model1, dssalariestest, type = "response") -->
+<!-- summary(results) -->
 
-```
-## Prediction and Results
-```{r}
-#Logistic Regression Prediction
-results <- predict(model1, dssalariestest, type = "response")
-summary(results)
+<!-- #Converting regression predictions to binary -->
+<!-- binresults <- ifelse(results< 0.5, 0,1) -->
 
-#Converting regression predictions to binary
-binresults <- ifelse(results< 0.5, 0,1)
+<!-- #Logistic Regression Results -->
+<!-- CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE) -->
+<!-- logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1") -->
+<!-- logresults -->
 
-#Logistic Regression Results
-CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE)
-logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1")
-logresults
-
-```
+<!-- ``` -->
 
 ## Getting Data Ready for Analysis
 
 ```{r, cache=T}
-
-
+#Convert all variables to dummies
 dssalaries_m <- as.data.frame(model.matrix(~.-1,dssalaries))
 str(dssalaries_m)
 summary(dssalaries_m)
@@ -171,19 +170,69 @@ dssalariestrain_norm <- dssalaries_norm[-test_set,]
 
 ```
 
+## Logistic Regression Model
+```{r}
+#Logistic Regression Model using all variables
+model <- glm(salaryabove ~., data=dssalariestrain_norm, family= "binomial")
+summary(model)
+
+#Logistic Regression Model removing insignificant variables
+model1 <- glm(salaryabove ~ Year2019+HobbyistYes+EdLevelDoctorate+EdLevelProfessionl+EmploymentPart+JobSat+OrgSize0.500+OrgSize10K.+UndergradMajorBusiness+UndergradMajorFine.arts.or.performing.arts+UndergradMajorHumanities+UndergradMajorI.never.declared.a.major+UndergradMajorMathematics.or.statistics+UndergradMajorNatural.science+UndergradMajorSocial.science+UndergradMajorWeb.development.or.web.design+YearsCodePro+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain_norm, family= "binomial")
+summary(model1)
+
+#Logistic Regression Prediction
+results <- predict(model1, dssalariestest_norm, type = "response")
+summary(results)
+
+#Converting regression predictions to binary
+binresults <- ifelse(results< 0.5, 0,1)
+
+#Logistic Regression Results Confusion Matrix
+#CrossTable(x = binresults, y = dssalariestest_norm$salaryabove, prop.chisq=FALSE)
+logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest_norm$salaryabove),positive="1")
+logresults
+
+```
+<!-- ## Prediction and Results -->
+<!-- ```{r} -->
+<!-- #Logistic Regression Prediction -->
+<!-- results <- predict(model1, dssalariestest_norm, type = "response") -->
+<!-- summary(results) -->
+
+<!-- #Converting regression predictions to binary -->
+<!-- binresults <- ifelse(results< 0.5, 0,1) -->
+
+<!-- #Logistic Regression Results -->
+<!-- CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE) -->
+<!-- logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1") -->
+<!-- logresults -->
+
+<!-- ``` -->
+
+
+
 ## KNN Model
 ```{r, cache=T}
 dssalaries_norm_n<-dssalaries_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
 
+#Create labels for KNN
 dssal_knn_train<-dssalariestrain_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
 dssal_knn_test<-dssalariestest_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
 dssal_knn_train_label<-dssalariestrain_norm[,which(colnames(dssalaries_norm)=="salaryabove" )]
 dssal_knn_test_label<-dssalariestest_norm[,which(colnames(dssalaries_norm)=="salaryabove" )]
 
+#KNN Model with k=119
 dssal_knn_test_pred <- knn(train = dssal_knn_train, test = dssal_knn_test,
                       cl = dssal_knn_train_label, k=round(sqrt(nrow(dssalariestrain_norm))))
 
+#KNN Model Results Confusion Matrix
 confusionMatrix(as.factor(dssal_knn_test_pred),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+
+#KNN Model with k=13
+dssal_knn_test_pred1 <- knn(train = dssal_knn_train, test = dssal_knn_test,
+                      cl = dssal_knn_train_label, k=13)
+#KNN Model Results Confusion Matrix
+confusionMatrix(as.factor(dssal_knn_test_pred1),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 
 ```
 
@@ -205,9 +254,10 @@ model_results <- compute(dssal_ann_model, dssalariestest_norm[-which(colnames(ds
 # obtain predicted strength values
 predicted_sal <- model_results$net.result
 
+#Convert results to binary
 predicted_sal2<-ifelse(predicted_sal > 0.5,1,0)
 
-
+#ANN model results Confusion Matrix
 confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 
 
@@ -215,68 +265,75 @@ confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryab
 
 ## Decision Tree
 ```{r}
+#Convert dependent variable to a factor
 dssalariestrain_norm$salaryabove <- as.factor(dssalariestrain_norm$salaryabove)
 dssalariestest_norm$salaryabove <- as.factor(dssalariestest_norm$salaryabove)
 
+#Decision tree model
 dssal_DT_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm)
 plot(dssal_DT_model)
 summary(dssal_DT_model)
 
-
+#Decision Tree Model prediction
 dssal_DT_predict <- predict(dssal_DT_model, dssalariestest_norm)
 
+#Decision Tree Model results Confusion Matrix
 orig<-confusionMatrix(as.factor(dssal_DT_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+orig
 
-
-## cost model
-error_cost <- matrix(c(0,2,1,0), nrow=2)
-error_cost
-
-dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs = error_cost)
-dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
-
-cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-cost
+# ## cost model
+# error_cost <- matrix(c(0,2,1,0), nrow=2)
+# error_cost
+# 
+# dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs = error_cost)
+# dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
+# 
+# cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+# cost
 ```
 
 ## Stacked Model
 ```{r}
-# Predictions Dataframe
-combined<-data.frame(ann=as.numeric(as.character(predicted_sal2)),knn=as.numeric(as.character(dssal_knn_test_pred)),log=as.numeric(as.character(binresults)),dt=as.numeric(as.character(dssal_DT_predict)), actual=dssalariestest_norm$salaryabove)
-combined
+# Create Predictions Dataframe
+combined<-data.frame(ann=as.numeric(as.character(predicted_sal2)),knn=as.numeric(as.character(dssal_knn_test_pred1)),log=as.numeric(as.character(binresults)),dt=as.numeric(as.character(dssal_DT_predict)), actual=dssalariestest_norm$salaryabove)
+#combined
 
+# Separate data to train and test
 combined_test <- combined[1:1000,]
 combined_train <- combined[1001:4000,]
 
+# Create stacked model
 stacked<-C5.0(actual~. ,data=combined_train)
 plot(stacked)
 summary(stacked)
 
+# Stacked model prediction
 final_predict <- predict(stacked, combined_test)
 
+#Stacke model results Confusion Matrix
 confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
 
 ```
 
-## Automated 10 Fold CV
+<!-- ## Automated 10 Fold CV -->
 
-```{r}
-set.seed(1234)
-folds <- createFolds(combined$actual, k = 10)
+<!-- ```{r} -->
+<!-- set.seed(1234) -->
+<!-- folds <- createFolds(combined$actual, k = 10) -->
 
-cv_results <- lapply(folds, function(x) {
-  combined_train <- combined[-x, ]
-  combined_test <- combined[x, ]
-  combined_model <- C5.0(actual ~ ., data = combined_train)
-  combined_pred <- predict(combined_model, combined_test)
-  combined_actual <- combined_test$actual
-  kappa <- kappa2(data.frame(combined_actual, combined_pred))$value
-  return(kappa)
-})
+<!-- cv_results <- lapply(folds, function(x) { -->
+<!--   combined_train <- combined[-x, ] -->
+<!--   combined_test <- combined[x, ] -->
+<!--   combined_model <- C5.0(actual ~ ., data = combined_train) -->
+<!--   combined_pred <- predict(combined_model, combined_test) -->
+<!--   combined_actual <- combined_test$actual -->
+<!--   kappa <- kappa2(data.frame(combined_actual, combined_pred))$value -->
+<!--   return(kappa) -->
+<!-- }) -->
 
-str(cv_results)
-mean(unlist(cv_results))
-```
+<!-- str(cv_results) -->
+<!-- mean(unlist(cv_results)) -->
+<!-- ``` -->
 
 ## Tuned Model
 ```{r}
@@ -331,3 +388,5 @@ We conducted other analysis using ML algorithms and constructed the second level
 ### Recommendation
 Based on these results, we concluded that we could utilize this model, especially the ANN model, to predict career success in terms of gaining salary above mean in the areas such as career development center in university or a job-changing advisory service. Though Data Scientist or Machine Learning Specialist career seems attractive among data-related jobs, to secure a higher salary, we would advise candidates to broaden their skill sets to business fields or aim for an engineering position in the upstream process.
 
+
+Ariel to add details on model tuning and years coding significance later this weekend
