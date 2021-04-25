@@ -1,7 +1,7 @@
 ---
 title: "Career Consultation and Prediciting Data Science Compensation"
 author: "Ariella Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada"
-date: "4/11/2021"
+date: "4/25/2021"
 output: 
   html_document:
     highlight: pygments
@@ -335,6 +335,8 @@ We constructed a second level stacked model. The ANN is the best performing mode
 
 ### Model Tuning
 Finally, we tuned the second level model using 10 cross validation and various trials for decision tree models. Using 10 fold cross validation reduces over-fitting and increases the reliability of the result. The results of all combinations are similar to results of the original ANN algorithm and better than the single stacked model created. This result shows the reliability of the model using various test and train sets despite the initial stacked model being slightly worse. 3 trials with no winnowing gives us the best performing model based on kappa values and oneSE. Higher kappa values are achieved with higher number of trials, but the value gained does not out-weigh the added complexity of the additional trials. Overall, we are confident with the reliability of the model to predict with about 70% accuracy and around 37% better than chance to help guide our clients to improve their data science careers.
+
+We recommend using boosting or random forest techniques to improve the final decision tree analysis even further. We also recommend further exploring Country as a variable, as it will likely lead to significant distinctions as well.
 
 ### Recommendation
 Based on these results, we concluded that we could utilize this model, especially the ANN model, to predict career success in terms of gaining salary above mean for *Twerk from Home!* clients (which could be in the areas such as career development center in university or a job-changing advisory service). Though Data Scientist or Machine Learning Specialist career seems attractive among data-related jobs, to secure a higher salary, we would advise candidates to broaden their skill sets to business fields or aim for an engineering position in the upstream process and continue to work in the field for many years.

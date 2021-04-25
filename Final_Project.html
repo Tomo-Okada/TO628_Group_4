@@ -444,7 +444,7 @@ pre code {
 
 <h1 class="title toc-ignore">Career Consultation and Prediciting Data Science Compensation</h1>
 <h4 class="author">Ariella Rose, Benjamin Lewis, Rahul Jain, Yoshitomo Okada</h4>
-<h4 class="date">4/11/2021</h4>
+<h4 class="date">4/25/2021</h4>
 
 </div>
 
@@ -1110,7 +1110,7 @@ pre code {
 ## C5.0.formula(formula = salaryabove ~ ., data = dssalariestrain_norm)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 25 16:18:09 2021
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 25 16:25:56 2021
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -1411,7 +1411,7 @@ pre code {
 ## C5.0.formula(formula = actual ~ ., data = combined_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Sun Apr 25 16:18:17 2021
+## C5.0 [Release 2.07 GPL Edition]      Sun Apr 25 16:26:04 2021
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -1570,6 +1570,7 @@ pre code {
 <div id="model-tuning" class="section level3">
 <h3>Model Tuning</h3>
 <p>Finally, we tuned the second level model using 10 cross validation and various trials for decision tree models. Using 10 fold cross validation reduces over-fitting and increases the reliability of the result. The results of all combinations are similar to results of the original ANN algorithm and better than the single stacked model created. This result shows the reliability of the model using various test and train sets despite the initial stacked model being slightly worse. 3 trials with no winnowing gives us the best performing model based on kappa values and oneSE. Higher kappa values are achieved with higher number of trials, but the value gained does not out-weigh the added complexity of the additional trials. Overall, we are confident with the reliability of the model to predict with about 70% accuracy and around 37% better than chance to help guide our clients to improve their data science careers.</p>
+<p>We recommend using boosting or random forest techniques to improve the final decision tree analysis even further. We also recommend further exploring Country as a variable, as it will likely lead to significant distinctions as well.</p>
 </div>
 <div id="recommendation" class="section level3">
 <h3>Recommendation</h3>
