@@ -101,60 +101,19 @@ dssalaries <- droplevels(dssalaries[!dssalaries$Year=='2018',])
 #Create new column for salary above mean
 dssalaries$salaryabove <- ifelse(dssalaries$ConvertedComp > mean(dssalaries$ConvertedComp),1,0)
 
-#Combine some of the EdLevel factors
+#Combine some of the EdLevel factors, grouping Masters and below as "Basic"
 levels(dssalaries$EdLevel) <- c("Basic","Basic","Doctorate","Basic","Professionl","Basic")
 
-#Combine some of the Employment factors
+#Combine some of the Employment factors, leaving 2 factor for Employment: Full-time and Part-time
 levels(dssalaries$Employment) <- c("Full","Part","Full")
 
-#Combine some of the OrgSize factors
+#Combine some of the OrgSize factors, simplifying to 0-500, 50-10K, and 10k+
 levels(dssalaries$OrgSize) <- c("500-10K","0-500","10K+","0-500","0-500","0-500","500-10K","500-10K","0-500")
 
-# nULL uneeded variables
+# Remove uneeded variables, ConvertedComp used as salaryabove and Country has too many factors to be useful
 dssalaries$ConvertedComp <- NULL
 dssalaries$Country <- NULL
-
-#Combine some of the UndergradMajor factors
-#levels(dssalaries$UndergradMajor) <- c("Eng+CS+IT","Bus","Eng+CS+IT","Art+Hum","Science","Art+Hum","None","Eng+CS+IT","Math","Science","Science","Eng+CS+IT")
-
 ```
-<!-- ## Creating Test and Train Data Sets -->
-<!-- # ```{r} -->
-<!-- # set.seed(12345) -->
-<!-- # test_set <- sample(1:nrow(dssalaries),4000) -->
-<!-- #  -->
-<!-- # # #Creating test and train data sets -->
-<!-- # # dssalariestest <- dssalaries[test_set,] -->
-<!-- # # dssalariestrain <- dssalaries[-test_set,] -->
-<!-- #  -->
-<!-- # ``` -->
-
-
-
-<!-- ## Logistic Regression Model -->
-<!-- ```{r} -->
-<!-- model <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Data.scientist.or.machine.learning.specialist+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial") -->
-<!-- summary(model) -->
-
-<!-- model1 <- glm(salaryabove ~Hobbyist+EdLevel+Employment+JobSat+OrgSize+UndergradMajor+YearsCodePro+Database.administrator+Data.or.business.analyst+Engineer..data, data=dssalariestrain, family= "binomial") -->
-<!-- summary(model1) -->
-
-<!-- ``` -->
-<!-- ## Prediction and Results -->
-<!-- ```{r} -->
-<!-- #Logistic Regression Prediction -->
-<!-- results <- predict(model1, dssalariestest, type = "response") -->
-<!-- summary(results) -->
-
-<!-- #Converting regression predictions to binary -->
-<!-- binresults <- ifelse(results< 0.5, 0,1) -->
-
-<!-- #Logistic Regression Results -->
-<!-- CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE) -->
-<!-- logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1") -->
-<!-- logresults -->
-
-<!-- ``` -->
 
 ## Getting Data Ready for Analysis
 
@@ -164,24 +123,22 @@ dssalaries_m <- as.data.frame(model.matrix(~.-1,dssalaries))
 str(dssalaries_m)
 summary(dssalaries_m)
 
-#Normalize the data
+#Normalize function
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-# we are going to normalize everything 
+# Normalize data 
 dssalaries_norm <- as.data.frame(lapply(dssalaries_m, normalize))
 summary(dssalaries_norm)
 
-# create training and testing dataset with normalized data
+# create randomized training and testing dataset with normalized data
 set.seed(12345)
 test_set <- sample(1:nrow(dssalaries_norm),4000)
 
 #Creating test and train data sets
 dssalariestest_norm <- dssalaries_norm[test_set,]
 dssalariestrain_norm <- dssalaries_norm[-test_set,]
-
-
 ```
 
 ## Logistic Regression Model
@@ -202,32 +159,15 @@ summary(results)
 binresults <- ifelse(results< 0.5, 0,1)
 
 #Logistic Regression Results Confusion Matrix
-#CrossTable(x = binresults, y = dssalariestest_norm$salaryabove, prop.chisq=FALSE)
 logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest_norm$salaryabove),positive="1")
 logresults
 
 ```
-<!-- ## Prediction and Results -->
-<!-- ```{r} -->
-<!-- #Logistic Regression Prediction -->
-<!-- results <- predict(model1, dssalariestest_norm, type = "response") -->
-<!-- summary(results) -->
-
-<!-- #Converting regression predictions to binary -->
-<!-- binresults <- ifelse(results< 0.5, 0,1) -->
-
-<!-- #Logistic Regression Results -->
-<!-- CrossTable(x = binresults, y = dssalariestest$salaryabove, prop.chisq=FALSE) -->
-<!-- logresults<-confusionMatrix(as.factor(binresults),as.factor(dssalariestest$salaryabove),positive="1") -->
-<!-- logresults -->
-
-<!-- ``` -->
 
 
 
 ## KNN Model
 ```{r, cache=T}
-dssalaries_norm_n<-dssalaries_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
 
 #Create labels for KNN
 dssal_knn_train<-dssalariestrain_norm[-which(colnames(dssalaries_norm)=="salaryabove" )]
@@ -245,27 +185,27 @@ confusionMatrix(as.factor(dssal_knn_test_pred),as.factor(dssalariestest_norm$sal
 #KNN Model with k=13
 dssal_knn_test_pred1 <- knn(train = dssal_knn_train, test = dssal_knn_test,
                       cl = dssal_knn_train_label, k=13)
+
 #KNN Model Results Confusion Matrix
 knnresults <- confusionMatrix(as.factor(dssal_knn_test_pred1),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-
+knnresults
 ```
 
 ## ANN Model
 
 ```{r, cache=T}
 
-# simple ANN with only a single hidden neuron
+# simple ANN with a single hidden neuron
 dssal_ann_model <- neuralnet(formula = salaryabove ~ .,
                               data = dssalariestrain_norm)
-
 
 # visualize the network topology
 plot(dssal_ann_model)
 
-## Step 4: Evaluating model performance ----
 # obtain model results
 model_results <- compute(dssal_ann_model, dssalariestest_norm[-which(colnames(dssalaries_norm)=="salaryabove" )])
-# obtain predicted strength values
+
+# obtain predicted values for ANN Model
 predicted_sal <- model_results$net.result
 
 #Convert results to binary
@@ -273,8 +213,7 @@ predicted_sal2<-ifelse(predicted_sal > 0.5,1,0)
 
 #ANN model results Confusion Matrix
 annresults <- confusionMatrix(as.factor(predicted_sal2),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-
-
+annresults
 ```
 
 ## Decision Tree
@@ -295,22 +234,23 @@ dssal_DT_predict <- predict(dssal_DT_model, dssalariestest_norm)
 orig<-confusionMatrix(as.factor(dssal_DT_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
 orig
 
-# ## cost model
-# error_cost <- matrix(c(0,2,1,0), nrow=2)
-# error_cost
-# 
-# dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs = error_cost)
-# dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
-# 
-# cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
-# cost
+## Defining a cost model to reduce false positives
+error_cost <- matrix(c(0,2,1,0), nrow=2)
+error_cost
+
+#Decision tree with costs model and prediction
+dssal_DT_cost_model <- C5.0(salaryabove ~ ., data = dssalariestrain_norm, costs = error_cost)
+dssal_DT_cost_predict <- predict(dssal_DT_cost_model, dssalariestest_norm)
+
+#Decision tree with costs Confusion Matrix
+cost<-confusionMatrix(as.factor(dssal_DT_cost_predict),as.factor(dssalariestest_norm$salaryabove),positive = "1")
+cost
 ```
 
 ## Stacked Model
 ```{r}
-# Create Predictions Dataframe
+# Create Predictions Dataframe combining all model results
 combined<-data.frame(ann=as.numeric(as.character(predicted_sal2)),knn=as.numeric(as.character(dssal_knn_test_pred1)),log=as.numeric(as.character(binresults)),dt=as.numeric(as.character(dssal_DT_predict)), actual=dssalariestest_norm$salaryabove)
-#combined
 
 # Separate data to train and test
 combined_test <- combined[1:1000,]
@@ -326,37 +266,16 @@ final_predict <- predict(stacked, combined_test)
 
 #Stacked model results Confusion Matrix
 stackedresults <- confusionMatrix(as.factor(final_predict),as.factor(combined_test$actual),positive = "1")
-
+stackedresults
 ```
-
-<!-- ## Automated 10 Fold CV -->
-
-<!-- ```{r} -->
-<!-- set.seed(1234) -->
-<!-- folds <- createFolds(combined$actual, k = 10) -->
-
-<!-- cv_results <- lapply(folds, function(x) { -->
-<!--   combined_train <- combined[-x, ] -->
-<!--   combined_test <- combined[x, ] -->
-<!--   combined_model <- C5.0(actual ~ ., data = combined_train) -->
-<!--   combined_pred <- predict(combined_model, combined_test) -->
-<!--   combined_actual <- combined_test$actual -->
-<!--   kappa <- kappa2(data.frame(combined_actual, combined_pred))$value -->
-<!--   return(kappa) -->
-<!-- }) -->
-
-<!-- str(cv_results) -->
-<!-- mean(unlist(cv_results)) -->
-<!-- ``` -->
 
 ## Tuned Model
 ```{r}
-## Customizing the tuning process ----
-# use trainControl() to alter resampling strategy
+# use trainControl() to alter resampling strategy using 10 fold cv
 ctrl <- trainControl(method = "cv", number = 10,
                      selectionFunction = "oneSE")
 
-# use expand.grid() to create grid of tuning parameters
+# use expand.grid() to create grid of tuning parameters, varying trials from 1 to 5
 grid <- expand.grid(.model = "tree",
                     .trials = c(1, 2, 3, 4, 5),
                     .winnow = "FALSE")
